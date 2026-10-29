@@ -9,185 +9,621 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#172b4d}
 header{background:#173f7a;color:white;padding:22px}
-header h1{margin:0;font-size:23px}
-header p{margin:7px 0 0;color:#dce8ff}
-main{max-width:1000px;margin:auto;padding:20px}
-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+header h1{margin:0;font-size:24px}
+header p{margin:8px 0 0;color:#dce8ff}
+main{max-width:1100px;margin:auto;padding:20px}
+nav,.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+nav{margin-bottom:22px}
 button,select,input{font:inherit;padding:10px;border:1px solid #ccd5e2;border-radius:7px}
-button{cursor:pointer;background:#fff;color:#173f7a}
+button{cursor:pointer;background:white;color:#173f7a}
 button.active,.primary{background:#1765c0;color:white;border-color:#1765c0}
+button:hover{filter:brightness(.96)}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
 .card,.panel{background:white;padding:18px;border-radius:12px;margin-bottom:16px;box-shadow:0 2px 8px #152d4b0b}
 .number{font-size:28px;font-weight:bold;margin-top:8px}
 label{display:block;margin:12px 0 5px}
-input,select{width:100%;margin-bottom:8px}
+input,select{width:100%;margin-bottom:8px;background:white;color:#172b4d}
 .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
 table{width:100%;border-collapse:collapse}
-th,td{text-align:left;padding:10px;border-bottom:1px solid #e6ebf2}
+th,td{text-align:left;padding:10px;border-bottom:1px solid #e6ebf2;vertical-align:middle}
 .table-wrap{overflow-x:auto}
 .status{font-weight:bold}
-.Present{color:#16834a}.Late{color:#b36a00}.Absent{color:#c23434}
+.Present{color:#16834a}.Late{color:#b36a00}.Absent{color:#c23434}.Unmarked{color:#617087}
+.hidden{display:none!important}
 .small{font-size:13px;color:#617087}
-.hidden{display:none}
-h2{font-size:20px}
+.danger{color:#c23434;border-color:#e5aaaa}
+.notice{padding:12px;border-radius:8px;background:#eaf3ff;margin:12px 0}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+h2{font-size:21px}
+@media(max-width:600px){
+ main{padding:12px}
+ header{padding:18px}
+ header h1{font-size:21px}
+ th,td{padding:8px;font-size:14px}
+}
 </style>
 </head>
 <body>
 <header>
-<h1>School Attendance Monitor</h1>
-<p>Attendance, grade levels and guardian communication</p>
+  <h1>School Attendance Monitor</h1>
+  <p>Attendance, grade levels and guardian communication</p>
 </header>
+
 <main>
 <nav>
-<button class="active" onclick="showPage('dashboard',this)">Dashboard</button>
-<button onclick="showPage('grades',this)">Grade Levels</button>
-<button onclick="showPage('students',this)">Students</button>
-<button onclick="showPage('attendance',this)">Attendance</button>
+  <button class="active" data-page="dashboard" onclick="showPage('dashboard',this)">Dashboard</button>
+  <button data-page="grades" onclick="showPage('grades',this)">Grade Levels</button>
+  <button data-page="students" onclick="showPage('students',this)">Students</button>
+  <button data-page="attendance" onclick="showPage('attendance',this)">Attendance</button>
 </nav>
 
 <section id="dashboard">
-<h2>Attendance Dashboard</h2>
-<p id="today"></p>
-<div class="cards">
-<div class="card">Total Students<div class="number" id="total">0</div></div>
-<div class="card">Present<div class="number" id="present">0</div></div>
-<div class="card">Late<div class="number" id="late">0</div></div>
-<div class="card">Absent<div class="number" id="absent">0</div></div>
-</div>
-<div class="panel">
-<h2>Getting Started</h2>
-<p>1. Add your school's grade levels.</p>
-<p>2. Register students and guardian mobile numbers.</p>
-<p>3. Open Attendance to record each student's status.</p>
-<p class="small">Prototype only: records are currently stored in this browser. SMS sending and shared database access are not yet connected.</p>
-</div>
+  <h2>Attendance Dashboard</h2>
+  <p id="today"></p>
+  <div class="cards">
+    <div class="card">Total Students<div class="number" id="total">0</div></div>
+    <div class="card">Present<div class="number" id="present">0</div></div>
+    <div class="card">Late<div class="number" id="late">0</div></div>
+    <div class="card">Absent<div class="number" id="absent">0</div></div>
+  </div>
+  <div class="panel">
+    <h2>Getting Started</h2>
+    <p>1. Add grade levels and sections.</p>
+    <p>2. Register students and guardian contact details.</p>
+    <p>3. Filter students by grade and section.</p>
+    <p>4. Edit student details or correct attendance whenever needed.</p>
+    <p class="small">Prototype: records are stored in this browser. A shared database and real SMS service are not yet connected.</p>
+  </div>
 </section>
 
 <section id="grades" class="hidden">
-<h2>Grade Level Management</h2>
-<div class="panel">
-<label>New grade level</label>
-<input id="gradeName" placeholder="e.g. Grade 7">
-<label>Sections (separate with commas)</label>
-<input id="sections" placeholder="e.g. Section A, Section B">
-<button class="primary" onclick="addGrade()">+ Add Grade Level</button>
-</div>
-<div class="panel"><div id="gradeList">No grade levels added yet.</div></div>
+  <h2>Grade Level Management</h2>
+  <div class="panel">
+    <label for="gradeName">New grade level</label>
+    <input id="gradeName" placeholder="e.g. Grade 7">
+    <label for="sections">Sections (separate with commas)</label>
+    <input id="sections" placeholder="e.g. Loyalty, Modesty, Honesty">
+    <button class="primary" onclick="addGrade()">+ Add Grade Level</button>
+  </div>
+  <div class="panel">
+    <h3>Existing Grade Levels</h3>
+    <div id="gradeList"></div>
+  </div>
 </section>
 
 <section id="students" class="hidden">
-<h2>Student Records</h2>
-<div class="panel">
-<div class="row">
-<div><label>Student full name</label><input id="studentName" placeholder="Full name"></div>
-<div><label>Grade level</label><select id="studentGrade"></select></div>
-<div><label>Section</label><select id="studentSection"></select></div>
-<div><label>Guardian name</label><input id="guardianName" placeholder="Guardian name"></div>
-<div><label>Guardian mobile number</label><input id="guardianPhone" type="tel" placeholder="+63 9XX XXX XXXX"></div>
-</div>
-<button class="primary" onclick="addStudent()">+ Add Student</button>
-</div>
-<div class="panel table-wrap">
-<table><thead><tr><th>Student</th><th>Grade/Section</th><th>Guardian</th></tr></thead><tbody id="studentList"></tbody></table>
-</div>
+  <h2>Student Records</h2>
+
+  <div class="panel">
+    <h3 id="studentFormTitle">Register New Student</h3>
+    <input type="hidden" id="editStudentId">
+
+    <div class="row">
+      <div>
+        <label for="studentName">Student full name</label>
+        <input id="studentName" placeholder="Student's full name">
+      </div>
+      <div>
+        <label for="studentGrade">Grade level</label>
+        <select id="studentGrade"></select>
+      </div>
+      <div>
+        <label for="studentSection">Section</label>
+        <select id="studentSection"></select>
+      </div>
+      <div>
+        <label for="guardianName">Guardian name</label>
+        <input id="guardianName" placeholder="Guardian's full name">
+      </div>
+      <div>
+        <label for="guardianPhone">Guardian mobile number</label>
+        <input id="guardianPhone" type="tel" placeholder="+63 9XX XXX XXXX">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" id="studentSubmit" onclick="saveStudent()">+ Add Student</button>
+      <button id="cancelStudentEdit" class="hidden" onclick="cancelStudentEdit()">Cancel Edit</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Find Students by Class</h3>
+    <div class="filters">
+      <div>
+        <label for="studentFilterGrade">Grade level</label>
+        <select id="studentFilterGrade" onchange="studentGradeFilterChanged()"></select>
+      </div>
+      <div>
+        <label for="studentFilterSection">Section</label>
+        <select id="studentFilterSection" onchange="renderStudents()"></select>
+      </div>
+    </div>
+    <p class="small" id="studentCount"></p>
+  </div>
+
+  <div class="panel table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Grade / Section</th>
+          <th>Guardian</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="studentList"></tbody>
+    </table>
+  </div>
 </section>
 
 <section id="attendance" class="hidden">
-<h2>Daily Attendance</h2>
-<div class="panel">
-<label>Attendance date</label><input id="attDate" type="date">
-<label>Filter by grade</label><select id="filterGrade" onchange="renderAttendance()"></select>
-<div class="table-wrap"><table>
-<thead><tr><th>Student</th><th>Section</th><th>Status</th></tr></thead>
-<tbody id="attendanceList"></tbody>
-</table></div>
-</div>
+  <h2>Daily Attendance</h2>
+  <div class="panel">
+    <div class="filters">
+      <div>
+        <label for="attDate">Attendance date</label>
+        <input id="attDate" type="date" onchange="cancelAttendanceEdit();renderAll()">
+      </div>
+      <div>
+        <label for="filterGrade">Grade level</label>
+        <select id="filterGrade" onchange="attendanceGradeFilterChanged()"></select>
+      </div>
+      <div>
+        <label for="filterSection">Section</label>
+        <select id="filterSection" onchange="cancelAttendanceEdit();renderAttendance()"></select>
+      </div>
+    </div>
+
+    <div class="notice small">
+      Select a grade and section to check one class at a time. Use Edit to correct a student's attendance status.
+    </div>
+
+    <div class="actions">
+      <button onclick="markAllPresent()">Mark All Present</button>
+      <button onclick="clearClassAttendance()" class="danger">Clear Class Attendance</button>
+    </div>
+
+    <p id="attendanceCount" class="small"></p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Student</th><th>Section</th><th>Status / Actions</th></tr>
+        </thead>
+        <tbody id="attendanceList"></tbody>
+      </table>
+    </div>
+  </div>
 </section>
 </main>
 
 <script>
-const $=id=>document.getElementById(id);
-let grades=[],students=[],records={};
+const $ = id => document.getElementById(id);
 
-function showPage(id,btn){
-document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
-$(id).classList.remove('hidden');
-document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-renderAll();
+let grades = [];
+let students = [];
+let records = {};
+let editingAttendanceKey = null;
+
+function loadData(){
+  try{
+    grades = JSON.parse(localStorage.getItem('attendance_grades') || '[]');
+    students = JSON.parse(localStorage.getItem('attendance_students') || '[]');
+    records = JSON.parse(localStorage.getItem('attendance_records') || '{}');
+
+    if(!Array.isArray(grades)) grades = [];
+    if(!Array.isArray(students)) students = [];
+    if(!records || typeof records !== 'object') records = {};
+  }catch(error){
+    alert('Saved data could not be read. Please do not clear browser storage.');
+    grades = [];
+    students = [];
+    records = {};
+  }
+}
+
+function saveData(){
+  try{
+    localStorage.setItem('attendance_grades',JSON.stringify(grades));
+    localStorage.setItem('attendance_students',JSON.stringify(students));
+    localStorage.setItem('attendance_records',JSON.stringify(records));
+  }catch(error){
+    alert('The browser could not save the data. Check available browser storage.');
+  }
+}
+
+function esc(value){
+  return String(value ?? '').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function showPage(id,button){
+  cancelAttendanceEdit();
+  document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+  $(id).classList.remove('hidden');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  button.classList.add('active');
+  renderAll();
 }
 
 function addGrade(){
-let name=$('gradeName').value.trim();
-let sections=$('sections').value.split(',').map(s=>s.trim()).filter(Boolean);
-if(!name)return alert('Enter a grade level.');
-if(grades.some(g=>g.name.toLowerCase()===name.toLowerCase()))return alert('This grade level already exists.');
-grades.push({name,sections});
-$('gradeName').value='';$('sections').value='';
-renderAll();
+  const name = $('gradeName').value.trim();
+  const sections = [...new Set(
+    $('sections').value.split(',').map(s=>s.trim()).filter(Boolean)
+  )];
+
+  if(!name) return alert('Enter a grade level.');
+  if(grades.some(g=>g.name.toLowerCase()===name.toLowerCase())){
+    return alert('This grade level already exists.');
+  }
+
+  grades.push({id:Date.now(),name,sections});
+  $('gradeName').value='';
+  $('sections').value='';
+  saveData();
+  renderAll();
+  alert('Grade level added.');
 }
 
-function addStudent(){
-let name=$('studentName').value.trim(),grade=$('studentGrade').value;
-if(!name||!grade)return alert('Enter the student name and create/select a grade level first.');
-students.push({id:Date.now(),name,grade,section:$('studentSection').value,
-guardian:$('guardianName').value.trim(),phone:$('guardianPhone').value.trim()});
-['studentName','guardianName','guardianPhone'].forEach(id=>$(id).value='');
-renderAll();
+function saveStudent(){
+  const editId = $('editStudentId').value;
+  const name = $('studentName').value.trim();
+  const grade = $('studentGrade').value;
+  const section = $('studentSection').value;
+
+  if(!name) return alert('Enter the student name.');
+  if(!grade) return alert('Add or select a grade level first.');
+  if(!section) return alert('Select a section.');
+
+  const details = {
+    name,
+    grade,
+    section,
+    guardian:$('guardianName').value.trim(),
+    phone:$('guardianPhone').value.trim()
+  };
+
+  if(editId){
+    const student = students.find(s=>String(s.id)===editId);
+    if(!student) return alert('Student record not found.');
+
+    // Preserve the student's ID so attendance history remains linked.
+    Object.assign(student,details);
+    alert('Student details updated successfully.');
+  }else{
+    students.push({id:Date.now(),...details});
+    alert('Student added successfully.');
+  }
+
+  cancelStudentEdit();
+  saveData();
+  renderAll();
 }
 
-function renderAll(){
-$('gradeList').innerHTML=grades.length?grades.map(g=>
-`<p><b>${esc(g.name)}</b> — ${g.sections.map(esc).join(', ')||'No sections yet'}</p>`).join(''):'No grade levels added yet.';
-$('studentGrade').innerHTML=grades.map(g=>`<option>${esc(g.name)}</option>`).join('');
-$('filterGrade').innerHTML='<option value="">All grades</option>'+grades.map(g=>`<option>${esc(g.name)}</option>`).join('');
-renderSections();renderStudents();renderAttendance();renderDashboard();
+function editStudent(id){
+  const student = students.find(s=>s.id===id);
+  if(!student) return;
+
+  $('editStudentId').value=String(student.id);
+  $('studentName').value=student.name;
+  $('studentGrade').value=student.grade;
+  renderStudentSections();
+
+  $('studentSection').value=student.section;
+  $('guardianName').value=student.guardian || '';
+  $('guardianPhone').value=student.phone || '';
+  $('studentFormTitle').textContent='Edit Student Details';
+  $('studentSubmit').textContent='Save Changes';
+  $('cancelStudentEdit').classList.remove('hidden');
+
+  $('studentName').scrollIntoView({behavior:'smooth',block:'center'});
+  $('studentName').focus();
 }
 
-function renderSections(){
-let g=grades.find(g=>g.name===$('studentGrade').value);
-$('studentSection').innerHTML=(g?.sections||[]).map(s=>`<option>${esc(s)}</option>`).join('');
+function cancelStudentEdit(){
+  $('editStudentId').value='';
+  $('studentName').value='';
+  $('guardianName').value='';
+  $('guardianPhone').value='';
+  $('studentFormTitle').textContent='Register New Student';
+  $('studentSubmit').textContent='+ Add Student';
+  $('cancelStudentEdit').classList.add('hidden');
+  renderStudentSections();
 }
 
-$('studentGrade').addEventListener('change',renderSections);
+function deleteStudent(id){
+  const student = students.find(s=>s.id===id);
+  if(!student) return;
+
+  if(!confirm('Delete '+student.name+' and all their attendance records?')) return;
+
+  students = students.filter(s=>s.id!==id);
+  Object.keys(records).forEach(key=>{
+    if(key.endsWith('-'+id)) delete records[key];
+  });
+
+  if($('editStudentId').value===String(id)) cancelStudentEdit();
+
+  saveData();
+  renderAll();
+}
+
+function deleteGrade(id){
+  const grade = grades.find(g=>g.id===id);
+  if(!grade) return;
+
+  if(students.some(s=>s.grade===grade.name)){
+    return alert('This grade has students. Move those students before deleting the grade.');
+  }
+
+  if(!confirm('Delete '+grade.name+'?')) return;
+  grades = grades.filter(g=>g.id!==id);
+  saveData();
+  renderAll();
+}
+
+function renderGrades(){
+  $('gradeList').innerHTML = grades.length
+    ? grades.map(g=>`
+      <div class="panel">
+        <strong>${esc(g.name)}</strong>
+        <p>Sections: ${g.sections.length ? g.sections.map(esc).join(', ') : 'None'}</p>
+        <button class="danger" onclick="deleteGrade(${g.id})">Delete Grade</button>
+      </div>
+    `).join('')
+    : 'No grade levels added yet.';
+}
+
+function setOptions(selectId,items,firstLabel,selected){
+  const select = $(selectId);
+  select.innerHTML =
+    `<option value="">${esc(firstLabel)}</option>` +
+    items.map(item=>`<option value="${esc(item)}">${esc(item)}</option>`).join('');
+
+  if(items.includes(selected)) select.value=selected;
+}
+
+function renderGradeOptions(){
+  const gradeNames = grades.map(g=>g.name);
+
+  const oldStudentGrade = $('studentGrade').value;
+  const oldStudentFilter = $('studentFilterGrade').value;
+  const oldAttendanceGrade = $('filterGrade').value;
+
+  setOptions('studentGrade',gradeNames,'Select grade',oldStudentGrade);
+  setOptions('studentFilterGrade',gradeNames,'All grades',oldStudentFilter);
+  setOptions('filterGrade',gradeNames,'All grades',oldAttendanceGrade);
+
+  renderStudentSections();
+  renderStudentFilterSections();
+  renderAttendanceFilterSections();
+}
+
+function renderStudentSections(){
+  const grade = grades.find(g=>g.name===$('studentGrade').value);
+  const sections = grade ? grade.sections : [];
+  setOptions('studentSection',sections,'Select section',$('studentSection').value);
+}
+
+function renderStudentFilterSections(){
+  const gradeName = $('studentFilterGrade').value;
+  const grade = grades.find(g=>g.name===gradeName);
+  const sections = grade ? grade.sections : [];
+  const selected = $('studentFilterSection').value;
+
+  setOptions(
+    'studentFilterSection',
+    sections,
+    gradeName ? 'All sections' : 'Select a grade first',
+    selected
+  );
+}
+
+function renderAttendanceFilterSections(){
+  const gradeName = $('filterGrade').value;
+  const grade = grades.find(g=>g.name===gradeName);
+  const sections = grade ? grade.sections : [];
+  const selected = $('filterSection').value;
+
+  setOptions(
+    'filterSection',
+    sections,
+    gradeName ? 'All sections' : 'Select a grade first',
+    selected
+  );
+}
+
+function studentGradeFilterChanged(){
+  $('studentFilterSection').value='';
+  renderStudentFilterSections();
+  renderStudents();
+}
+
+function attendanceGradeFilterChanged(){
+  $('filterSection').value='';
+  cancelAttendanceEdit();
+  renderAttendanceFilterSections();
+  renderAttendance();
+}
 
 function renderStudents(){
-$('studentList').innerHTML=students.map(s=>
-`<tr><td>${esc(s.name)}</td><td>${esc(s.grade)} / ${esc(s.section)}</td><td>${esc(s.guardian)}<br>${esc(s.phone)}</td></tr>`).join('');
+  const grade = $('studentFilterGrade').value;
+  const section = $('studentFilterSection').value;
+
+  const list = students.filter(s=>
+    (!grade || s.grade===grade) &&
+    (!section || s.section===section)
+  );
+
+  $('studentCount').textContent =
+    'Showing '+list.length+' of '+students.length+' students.';
+
+  $('studentList').innerHTML = list.length
+    ? list.map(s=>`
+      <tr>
+        <td>${esc(s.name)}</td>
+        <td>${esc(s.grade)} / ${esc(s.section)}</td>
+        <td>${esc(s.guardian)}<br>${esc(s.phone)}</td>
+        <td>
+          <div class="actions">
+            <button class="primary" onclick="editStudent(${s.id})">Edit</button>
+            <button class="danger" onclick="deleteStudent(${s.id})">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `).join('')
+    : '<tr><td colspan="4">No students found for this selection.</td></tr>';
 }
 
 function renderAttendance(){
-let date=$('attDate').value,filter=$('filterGrade').value;
-$('attendanceList').innerHTML=students.filter(s=>!filter||s.grade===filter).map(s=>{
-let key=date+'-'+s.id,status=records[key]||'Unmarked';
-return `<tr><td>${esc(s.name)}</td><td>${esc(s.section)}</td><td>
-<select onchange="mark(${s.id},this.value)">
-${['Unmarked','Present','Late','Absent'].map(v=>`<option ${v===status?'selected':''}>${v}</option>`).join('')}
-</select></td></tr>`;
-}).join('');
+  const date = $('attDate').value;
+  const grade = $('filterGrade').value;
+  const section = $('filterSection').value;
+
+  const list = students.filter(s=>
+    (!grade || s.grade===grade) &&
+    (!section || s.section===section)
+  );
+
+  $('attendanceCount').textContent =
+    'Showing '+list.length+' students for '+(date||'the selected date')+'.';
+
+  $('attendanceList').innerHTML = list.length
+    ? list.map(s=>{
+      const key = date+'-'+s.id;
+      const status = records[key] || 'Unmarked';
+
+      if(editingAttendanceKey===key){
+        return `<tr>
+          <td>${esc(s.name)}</td>
+          <td>${esc(s.section)}</td>
+          <td>
+            <select id="editStatus-${s.id}">
+              ${['Unmarked','Present','Late','Absent'].map(v=>
+                `<option value="${v}" ${v===status?'selected':''}>${v}</option>`
+              ).join('')}
+            </select>
+            <div class="actions">
+              <button class="primary" onclick="saveAttendance(${s.id})">Save</button>
+              <button onclick="cancelAttendanceEdit()">Cancel</button>
+            </div>
+          </td>
+        </tr>`;
+      }
+
+      return `<tr>
+        <td>${esc(s.name)}</td>
+        <td>${esc(s.section)}</td>
+        <td>
+          <span class="status ${status}">${esc(status)}</span>
+          <div class="actions">
+            <button class="primary" onclick="startAttendanceEdit(${s.id})">Edit</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('')
+    : '<tr><td colspan="3">No students found. Check the grade and section filters.</td></tr>';
 }
 
-function mark(id,status){
-let key=$('attDate').value+'-'+id;
-if(status==='Unmarked')delete records[key];else records[key]=status;
-renderDashboard();
+function startAttendanceEdit(id){
+  editingAttendanceKey = $('attDate').value+'-'+id;
+  renderAttendance();
+}
+
+function saveAttendance(id){
+  const key = $('attDate').value+'-'+id;
+  const select = $('editStatus-'+id);
+  if(!select) return;
+
+  if(select.value==='Unmarked'){
+    delete records[key];
+  }else{
+    records[key]=select.value;
+  }
+
+  editingAttendanceKey=null;
+  saveData();
+  renderAll();
+}
+
+function cancelAttendanceEdit(){
+  editingAttendanceKey=null;
+}
+
+function markAllPresent(){
+  const date = $('attDate').value;
+  const grade = $('filterGrade').value;
+  const section = $('filterSection').value;
+
+  if(!date) return alert('Select an attendance date first.');
+  if(!grade || !section){
+    return alert('Select both a grade level and section before marking all students Present.');
+  }
+
+  const list = students.filter(s=>s.grade===grade && s.section===section);
+  if(!list.length) return alert('There are no students in this section.');
+
+  if(!confirm('Mark all '+list.length+' students in '+grade+' / '+section+' as Present for '+date+'?')) return;
+
+  list.forEach(s=>records[date+'-'+s.id]='Present');
+  editingAttendanceKey=null;
+  saveData();
+  renderAll();
+}
+
+function clearClassAttendance(){
+  const date = $('attDate').value;
+  const grade = $('filterGrade').value;
+  const section = $('filterSection').value;
+
+  if(!date || !grade || !section){
+    return alert('Select a date, grade level, and section first.');
+  }
+
+  const list = students.filter(s=>s.grade===grade && s.section===section);
+  if(!list.length) return alert('No students found in this section.');
+
+  if(!confirm('Clear all attendance records for '+grade+' / '+section+' on '+date+'?')) return;
+
+  list.forEach(s=>delete records[date+'-'+s.id]);
+  editingAttendanceKey=null;
+  saveData();
+  renderAll();
 }
 
 function renderDashboard(){
-$('total').textContent=students.length;
-let date=$('attDate').value;
-['Present','Late','Absent'].forEach(status=>{
-$(status.toLowerCase()).textContent=students.filter(s=>records[date+'-'+s.id]===status).length;
-});
+  const date = $('attDate').value;
+  $('total').textContent=students.length;
+
+  ['Present','Late','Absent'].forEach(status=>{
+    $(status.toLowerCase()).textContent=students.filter(
+      s=>records[date+'-'+s.id]===status
+    ).length;
+  });
 }
 
-function esc(v){
-return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function renderAll(){
+  renderGrades();
+  renderGradeOptions();
+  renderStudents();
+  renderAttendance();
+  renderDashboard();
 }
 
-let now=new Date();
-$('today').textContent='Date: '+now.toLocaleDateString();
-$('attDate').value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+function localDateString(date){
+  return date.getFullYear()+'-'+
+    String(date.getMonth()+1).padStart(2,'0')+'-'+
+    String(date.getDate()).padStart(2,'0');
+}
+
+$('studentGrade').addEventListener('change',renderStudentSections);
+
+$('today').textContent='Date: '+new Date().toLocaleDateString();
+$('attDate').value=localDateString(new Date());
+
+loadData();
 renderAll();
 </script>
 </body>
