@@ -233,15 +233,608 @@ tbody tr:hover{background:#f1f6fa}
 .day-option input{accent-color:#4b8b91}
 @media(max-width:900px){nav button.active{border-left:0;border-bottom:3px solid #4c91a0;padding-left:12px}}
 
-</style>
 
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="./attendance-check-icon.png">
-    <meta name="theme-color" content="#1e3a8a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="School Attendance">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-</head>
+
+/* MOBILE_RED DESIGN_V1 */
+@media (max-width: 900px) {
+    .app {
+        display: block !important;
+        min-height: auto !important;
+        padding-bottom: 0 !important;
+    }
+
+    nav#navigation {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
+        z-index: 9999 !important;
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        gap: 2px !important;
+        overflow: visible !important;
+        padding: 7px 3px calc(7px + env(safe-area-inset-bottom)) !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        border-top: 1px solid var(--b) !important;
+        border-bottom: 0 !important;
+        background: #ffffff !important;
+        box-shadow: 0 -3px 14px rgba(0,0,0,.10) !important;
+    }
+
+    nav#navigation button {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 48px !important;
+        margin: 0 !important;
+        padding: 5px 1px !important;
+        border: 0 !important;
+        border-radius: 9px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    main {
+        width: 100% !important;
+        min-width: 0 !important;
+        padding: 12px 12px calc(105px + env(safe-area-inset-bottom)) !important;
+        overflow-x: hidden !important;
+    }
+
+    body {
+        overflow-x: hidden !important;
+        padding-bottom: 0 !important;
+    }
+
+    header {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .table-wrap {
+        width: 100% !important;
+        overflow: visible !important;
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+
+    table {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+    }
+
+    table thead {
+        display: none !important;
+    }
+
+    table tbody {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    table tbody tr {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 0 12px !important;
+        padding: 8px 10px !important;
+        background: #ffffff !important;
+        border: 1px solid var(--b) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 7px rgba(0,0,0,.045) !important;
+    }
+
+    table tbody td {
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        padding: 8px 2px !important;
+        border: 0 !important;
+        border-bottom: 1px solid #edf0f5 !important;
+        text-align: right !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    table tbody td:last-child {
+        border-bottom: 0 !important;
+    }
+
+    table tbody td::before {
+        content: attr(data-label);
+        flex: 0 0 38%;
+        max-width: 38%;
+        color: var(--m);
+        font-size: 11px;
+        font-weight: 700;
+        text-align: left;
+        overflow-wrap: anywhere;
+    }
+
+    table tbody td[colspan] {
+        display: block !important;
+        text-align: center !important;
+    }
+
+    table tbody td[colspan]::before {
+        content: none !important;
+    }
+
+    table tbody td button {
+        max-width: 100% !important;
+        white-space: normal !important;
+    }
+
+    input, select, textarea {
+        max-width: 100% !important;
+        min-width: 0 !important;
+        font-size: 16px !important;
+    }
+
+    button, .btn {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+    }
+
+    .grid, .two-col, .form-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    img, canvas, svg {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    nav#navigation button {
+        font-size: 9px !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    main {
+        padding-left: 9px !important;
+        padding-right: 9px !important;
+    }
+
+    table tbody tr {
+        padding: 7px !important;
+    }
+
+    table tbody td::before {
+        flex-basis: 34%;
+        max-width: 34%;
+    }
+}
+
+@media print {
+    nav#navigation {
+        position: static !important;
+        display: none !important;
+    }
+
+    main {
+        padding: 0 !important;
+    }
+
+    table, table thead, table tbody, table tr, table td {
+        display: revert !important;
+    }
+
+    table thead {
+        display: table-header-group !important;
+    }
+
+    table tbody {
+        display: table-row-group !important;
+    }
+
+    table tr {
+        display: table-row !important;
+    }
+
+    table td {
+        display: table-cell !important;
+    }
+
+    table tbody td::before {
+        content: none !important;
+    }
+}
+/* END MOBILE_RED DESIGN_V1 */
+
+
+/* =========================================================
+   MOBILE PHONE REDESIGN V2
+   Student registration, student list, attendance roster,
+   and permanently fixed bottom navigation.
+   Existing application logic and data keys are unchanged.
+   ========================================================= */
+
+@media screen and (max-width: 900px) {
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+  }
+
+  body {
+    padding-bottom: calc(82px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .app {
+    display: block !important;
+    width: 100%;
+    min-height: 0 !important;
+  }
+
+  /* Always-visible bottom navigation */
+  nav#navigation {
+    position: fixed !important;
+    top: auto !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 99999 !important;
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 2px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 7px 4px calc(7px + env(safe-area-inset-bottom)) !important;
+    overflow: visible !important;
+    background: rgba(255,255,255,.98) !important;
+    border: 0 !important;
+    border-top: 1px solid #dce5ef !important;
+    border-radius: 0 !important;
+    box-shadow: 0 -4px 18px rgba(35,60,85,.13) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  nav#navigation button {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 49px !important;
+    margin: 0 !important;
+    padding: 5px 1px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    font-size: clamp(9px, 2.6vw, 11px) !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  nav#navigation button.active {
+    padding: 5px 1px !important;
+    color: #285d83 !important;
+    background: #eaf2f8 !important;
+    border: 0 !important;
+    box-shadow: inset 0 -3px #4c91a0 !important;
+  }
+
+  main {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 13px 11px calc(105px + env(safe-area-inset-bottom)) !important;
+    overflow-x: hidden !important;
+  }
+
+  .page, .card, .field, .fields, .actions {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }  /* 1. Student registration: one field per row */
+  #students > .card:first-of-type .fields {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 13px !important;
+  }
+
+  #students > .card:first-of-type .field,
+  #students > .card:first-of-type .field.full {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  #students > .card:first-of-type input,
+  #students > .card:first-of-type select {
+    display: block;
+    width: 100% !important;
+    min-height: 47px !important;
+    font-size: 16px !important;
+  }
+
+  #students > .card:first-of-type .actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 9px !important;
+  }
+
+  #students > .card:first-of-type .actions .btn {
+    min-height: 44px !important;
+    width: 100% !important;
+  }
+
+  /* Student filters stack neatly on narrow screens */
+  #students > .card:nth-of-type(2) .inline-filters {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  #students > .card:nth-of-type(2) .inline-filters .field {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* 2. Student and attendance tables become vertical cards.
+     No horizontal table scrolling is used on phones. */
+  .table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .table-wrap table {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    border: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  .table-wrap table thead {
+    display: none !important;
+  }
+
+  .table-wrap table tbody {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .table-wrap table tbody tr {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 0 12px !important;
+    padding: 9px 11px !important;
+    background: #fff !important;
+    border: 1px solid #dce5ef !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(35,60,85,.06) !important;
+  }
+
+  .table-wrap table tbody td {
+    display: grid !important;
+    grid-template-columns: minmax(88px, 36%) minmax(0, 1fr) !important;
+    align-items: start !important;
+    justify-content: initial !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 9px 2px !important;
+    border: 0 !important;
+    border-bottom: 1px solid #edf1f5 !important;
+    text-align: left !important;
+    font-size: 13px !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .table-wrap table tbody td:last-child {
+    border-bottom: 0 !important;
+  }
+
+  .table-wrap table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    min-width: 0;
+    color: #68788d;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .table-wrap table tbody td[colspan] {
+    display: block !important;
+    padding: 16px 5px !important;
+    text-align: center !important;
+  }
+
+  .table-wrap table tbody td[colspan]::before {
+    content: none !important;
+  }
+
+  /* Student records: keep long email addresses readable */
+  #studentTable td {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  /* 2. Attendance roster: controls occupy the available card width */
+  #attendance .fields {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 11px !important;
+  }
+
+  #attendance .fields .field {
+    width: 100% !important;
+  }
+
+  #attendance .fields input,
+  #attendance .fields select {
+    width: 100% !important;
+    min-height: 46px !important;
+    font-size: 16px !important;
+  }
+
+  #attendance #loadRosterBtn,
+  #attendance #saveAttendanceBtn {
+    width: 100% !important;
+    min-height: 46px !important;
+  }
+
+  #rosterTable tr[data-student] {
+    padding: 10px 12px !important;
+    margin-bottom: 13px !important;
+  }
+
+  #rosterTable tr[data-student] td {
+    grid-template-columns: minmax(85px, 32%) minmax(0, 1fr) !important;
+    gap: 8px !important;
+    align-items: center !important;
+  }
+
+  #rosterTable td select,
+  #rosterTable td input {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 43px !important;
+    font-size: 16px !important;
+  }
+
+  #rosterTable td .btn {
+    width: 100% !important;
+    min-height: 42px !important;
+    white-space: normal !important;
+  }
+
+  #rosterTable .email-status {
+    white-space: normal !important;
+    line-height: 1.4;
+  }
+
+  /* General phone sizing */
+  input, select, textarea {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    font-size: 16px !important;
+  }
+
+  button, .btn {
+    max-width: 100%;
+    touch-action: manipulation;
+    overflow-wrap: anywhere;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+  }
+
+  .stat {
+    min-width: 0 !important;
+    padding: 11px !important;
+  }
+
+  .stat strong {
+    font-size: 22px !important;
+  }
+
+  .grid, .two-col {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  footer {
+    padding-bottom: 12px;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  nav#navigation {
+    gap: 1px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+
+  nav#navigation button {
+    font-size: 9px !important;
+  }
+
+  #students > .card:first-of-type .actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .table-wrap table tbody td {
+    grid-template-columns: minmax(78px, 33%) minmax(0, 1fr) !important;
+    gap: 6px !important;
+  }
+}
+
+@media print {
+  nav#navigation {
+    position: static !important;
+    display: none !important;
+  }
+
+  body {
+    padding-bottom: 0 !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  .table-wrap table,
+  .table-wrap table thead,
+  .table-wrap table tbody,
+  .table-wrap table tr,
+  .table-wrap table td {
+    display: revert !important;
+  }
+
+  .table-wrap table thead {
+    display: table-header-group !important;
+  }
+
+  .table-wrap table tbody {
+    display: table-row-group !important;
+  }
+
+  .table-wrap table tr {
+    display: table-row !important;
+  }
+
+  .table-wrap table td {
+    display: table-cell !important;
+  }
+
+  .table-wrap table tbody td::before {
+    content: none !important;
+  }
+}
+/* END MOBILE PHONE REDESIGN V2 */
+
+</style></head>
 
 <body>
 
@@ -263,17 +856,17 @@ tbody tr:hover{background:#f1f6fa}
 
 <nav id="navigation">
 
-<button class="active" data-page="dashboard">📊 Dashboard</button>
+<button class="active" data-page="dashboard">🏠 Home</button>
 
-<button data-page="profile">🏫 School Profile & Class Schedule</button>
+<button data-page="profile">🗓️ Schedule</button>
 
-<button data-page="students">👨‍🎓 Student Records</button>
+<button data-page="students">👥 Students</button>
 
 <button data-page="attendance">📝 Attendance</button>
 
-<button data-page="reports">📄 Reports & Analytics</button>
+<button data-page="reports">📊 Reports</button>
 
-<button data-page="dataManagement">🗄️ Data Management & Archive</button>
+<button data-page="dataManagement">☰ More</button>
 
 </nav>
 
@@ -499,13 +1092,13 @@ tbody tr:hover{background:#f1f6fa}
 
 <!-- STUDENT RECORDS -->
 
-<section id="students" class="page">
-
-<h2>Student Records</h2>
+<section id="students" class="page"><h2>Student Records</h2>
 
 <div class="card">
 
 <h3>Register Student</h3>
+
+<div class="fields"><h3>Register Student</h3>
 
 <div class="fields">
 
@@ -954,8 +1547,7 @@ function refreshSelectors(){
  options(document.getElementById("filterStudentSection"),sections(document.getElementById("filterStudentGrade").value),"All sections");
  options(document.getElementById("attendanceSection"),sections(document.getElementById("attendanceGrade").value),"Select section");
  options(document.getElementById("attendanceSubject"),subjects(document.getElementById("attendanceGrade").value,document.getElementById("attendanceSection").value),"Select subject");
- options(document.getElementById("reportSection"),sections(document.getElementById("reportGrade").value),"All sections");
- options(document.getElementById("reportSubject"),subjects(document.getElementById("reportGrade").value,document.getElementById("reportSection").value),"All subjects");
+ options(document.getElementById("reportSection"),sections(document.getElementById("reportGrade").value),"All sections"); options(document.getElementById("reportSubject"),subjects(document.getElementById("reportGrade").value,document.getElementById("reportSection").value),"All subjects");
  options(document.getElementById("dashSection"),sections(document.getElementById("dashGrade").value),"All sections");
 }
 
@@ -986,10 +1578,15 @@ document.getElementById("dashGrade").onchange=()=>{
  refreshDashboard();
 };
 
+let editingStudentId = null;
+
 function clearStudent(){
+ editingStudentId = null;
  ["studentId","studentName","guardianName","guardianEmail"].forEach(id=>document.getElementById(id).value="");
+ document.getElementById("studentId").disabled=false;
  document.getElementById("studentGrade").value="";
  options(document.getElementById("studentSection"),[],"Select section");
+ document.getElementById("saveStudentBtn").textContent="Save Student";
 }
 
 document.getElementById("clearStudentBtn").onclick=clearStudent;
@@ -1003,12 +1600,43 @@ document.getElementById("saveStudentBtn").onclick=()=>{
   guardian:document.getElementById("guardianName").value.trim(),
   email:document.getElementById("guardianEmail").value.trim()
  };
+
  if(!s.id||!s.name||!s.grade||!s.section){
   alert("Please complete student ID, name, grade and section.");
   return;
  }
+
  const a=students();
- if(a.some(x=>x.id===s.id)){alert("Student ID already exists.");return}
+ if(a.some(x=>x.id===s.id&&x.id!==editingStudentId)){
+  alert("Student ID already exists.");
+  return;
+ }
+
+ if(editingStudentId!==null){
+  if(!a.some(x=>x.id===editingStudentId)){
+   alert("Student record could not be found. Please try again.");
+   clearStudent();
+   return;
+  }
+
+  write(K.students,a.map(x=>x.id===editingStudentId?s:x));
+
+  // Keep the student's existing attendance history while updating the linked details.
+  write(K.records,records().map(r=>r.studentId===editingStudentId?{
+   ...r,
+   studentId:s.id,
+   studentName:s.name,
+   grade:s.grade,
+   section:s.section
+  }:r));
+
+  activity("Updated student: "+s.name);
+  clearStudent();
+  refreshAll();
+  alert("Student record updated successfully.");
+  return;
+ }
+
  a.push(s);
  write(K.students,a);
  activity("Registered student: "+s.name);
@@ -1016,6 +1644,26 @@ document.getElementById("saveStudentBtn").onclick=()=>{
  refreshAll();
  alert("Student saved.");
 };
+
+function editStudent(id){
+ const s=students().find(x=>x.id===id);
+ if(!s){
+  alert("Student record could not be found.");
+  return;
+ }
+
+ editingStudentId=id;
+ document.getElementById("studentId").value=s.id;
+ document.getElementById("studentName").value=s.name;
+ document.getElementById("studentGrade").value=s.grade;
+ options(document.getElementById("studentSection"),sections(s.grade),"Select section");
+ document.getElementById("studentSection").value=s.section;
+ document.getElementById("guardianName").value=s.guardian||"";
+ document.getElementById("guardianEmail").value=s.email||"";
+ document.getElementById("studentId").disabled=true;
+ document.getElementById("saveStudentBtn").textContent="Update Student";
+ document.getElementById("studentName").scrollIntoView({behavior:"smooth",block:"center"});
+}
 
 function renderStudents(){
  const fg=document.getElementById("filterStudentGrade").value;
@@ -1025,7 +1673,10 @@ function renderStudents(){
  document.getElementById("studentTable").innerHTML=a.map(s=>`
  <tr><td>${esc(s.id)}</td><td>${esc(s.name)}</td><td>${esc(s.grade)}</td><td>${esc(s.section)}</td>
  <td>${esc(s.guardian||"")}</td><td>${esc(s.email||"")}</td>
- <td><button class="btn red small" onclick="deleteStudent('${esc(s.id)}')">Delete</button></td></tr>
+ <td>
+  <button class="btn small" onclick="editStudent('${esc(s.id)}')">✏️ Edit</button>
+  <button class="btn red small" onclick="deleteStudent('${esc(s.id)}')">Delete</button>
+ </td></tr>
  `).join("")||'<tr><td colspan="7" class="empty">No students found.</td></tr>';
 }
 
@@ -1036,6 +1687,7 @@ function deleteStudent(id){
  if(!confirm("Delete this student and all of the student's attendance records?"))return;
  write(K.students,students().filter(s=>s.id!==id));
  write(K.records,records().filter(r=>r.studentId!==id));
+ if(editingStudentId===id)clearStudent();
  activity("Deleted student ID: "+id);
  refreshAll();
 }
@@ -1050,8 +1702,7 @@ function loadRoster(){
  const section=document.getElementById("attendanceSection").value;
  const subject=document.getElementById("attendanceSubject").value;
  if(!date||!grade||!section||!subject){
-  alert("Please select date, grade, section and subject.");
-  return;
+  alert("Please select date, grade, section and subject.");  return;
  }
  roster=students().filter(s=>s.grade===grade&&s.section===section);
  if(!roster.length){
@@ -1354,7 +2005,8 @@ function afterDataChange(){
  loadProfile();
  clearClass();
  clearStudent();
- document.getElementById("historyPanel").classList.add("hidden");
+ const historyPanel = document.getElementById("historyPanel");
+    if (historyPanel) historyPanel.classList.add("hidden");
  document.getElementById("rosterTable").innerHTML='<tr><td colspan="5" class="empty">Choose a class and load the roster.</td></tr>';
  refreshAll();
  renderDataSummary();
@@ -1450,14 +2102,41 @@ refreshAll();
 
 
 <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js")
-      .catch(error => console.warn("PWA registration failed:", error));
-  });
-}
+/* Mobile table labels: one observer for all dynamically rendered tables. */
+(function () {
+    function labelTables() {
+        document.querySelectorAll("table").forEach(function (table) {
+            const headers = Array.from(
+                table.querySelectorAll("thead th")
+            ).map(function (th) {
+                return th.textContent.trim().replace(/\s+/g, " ");
+            });
+
+            table.querySelectorAll("tbody tr").forEach(function (row) {
+                Array.from(row.children).forEach(function (cell, index) {
+                    if (cell.tagName !== "TD" || cell.hasAttribute("colspan")) {
+                        return;
+                    }
+
+                    if (!cell.dataset.label && headers[index]) {
+                        cell.dataset.label = headers[index];
+                    }
+                });
+            });
+        });
+    }
+
+    labelTables();
+
+    const observer = new MutationObserver(function () {
+        labelTables();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+})();
 </script>
 
 </body>
-
-</html>
