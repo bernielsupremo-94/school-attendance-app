@@ -1,630 +1,1447 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>School Attendance Monitor</title>
+
+<title>School Attendance Monitoring System</title>
+
 <style>
+
+:root{--p:#174ea6;--d:#123b7a;--l:#eaf2ff;--bg:#f3f6fb;--t:#1f2937;--m:#64748b;--b:#dbe3ef;--g:#15803d;--r:#b91c1c;--o:#b45309}
+
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#172b4d}
-header{background:#173f7a;color:white;padding:22px}
-header h1{margin:0;font-size:24px}
-header p{margin:8px 0 0;color:#dce8ff}
-main{max-width:1100px;margin:auto;padding:20px}
-nav,.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-nav{margin-bottom:22px}
-button,select,input{font:inherit;padding:10px;border:1px solid #ccd5e2;border-radius:7px}
-button{cursor:pointer;background:white;color:#173f7a}
-button.active,.primary{background:#1765c0;color:white;border-color:#1765c0}
-button:hover{filter:brightness(.96)}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
-.card,.panel{background:white;padding:18px;border-radius:12px;margin-bottom:16px;box-shadow:0 2px 8px #152d4b0b}
-.number{font-size:28px;font-weight:bold;margin-top:8px}
-label{display:block;margin:12px 0 5px}
-input,select{width:100%;margin-bottom:8px;background:white;color:#172b4d}
-.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-table{width:100%;border-collapse:collapse}
-th,td{text-align:left;padding:10px;border-bottom:1px solid #e6ebf2;vertical-align:middle}
-.table-wrap{overflow-x:auto}
-.status{font-weight:bold}
-.Present{color:#16834a}.Late{color:#b36a00}.Absent{color:#c23434}.Unmarked{color:#617087}
+
+body{margin:0;font:14px Arial,sans-serif;background:var(--bg);color:var(--t)}
+
+header{background:linear-gradient(120deg,var(--d),var(--p));color:white;padding:18px 22px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+header h1{font-size:22px;margin:0}
+
+header small{display:block;margin-top:5px;color:#dbeafe}
+
+.app{display:flex;min-height:calc(100vh - 75px)}
+
+nav{width:235px;background:white;border-right:1px solid var(--b);padding:12px;flex-shrink:0}
+
+nav button{display:block;width:100%;padding:12px;margin:4px 0;text-align:left;background:transparent;border:0;border-radius:8px;cursor:pointer}
+
+nav button.active,nav button:hover{background:var(--l);color:var(--p);font-weight:bold}
+
+main{padding:22px;width:100%;min-width:0}
+
+.page{display:none}
+
+.page.active{display:block}
+
+h2{margin:0 0 18px;color:#172554}
+
+h3{font-size:17px;margin:0 0 14px}
+
+.card,.stat{background:white;border:1px solid var(--b);border-radius:12px;padding:18px;margin-bottom:18px;box-shadow:0 4px 14px #0f172a0d}
+
+.stats,.grid,.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+
+.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:18px}
+
+.stat span{display:block;color:var(--m);font-size:13px}
+
+.stat strong{display:block;font-size:28px;margin-top:8px}
+
+.stat small{display:block;color:var(--m);margin-top:5px}
+
+label{display:block;font-size:13px;font-weight:bold;margin-bottom:6px}
+
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:7px;background:white;font-size:14px;color:var(--t)}
+
+.field{min-width:0}
+
+.full{grid-column:1/-1}
+
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+.btn{border:0;border-radius:7px;padding:10px 13px;background:var(--p);color:white;cursor:pointer;font-size:13px;font-weight:bold}
+
+.btn:disabled{opacity:.55;cursor:not-allowed}
+
+.secondary{background:#475569}
+
+.green{background:var(--g)}
+
+.red{background:var(--r)}
+
+.orange{background:var(--o)}
+
+.small{padding:7px 9px;font-size:12px}
+
+.muted{color:var(--m);font-size:13px}
+
+.notice{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:12px;border-radius:8px;margin-bottom:14px;line-height:1.5}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--b);border-radius:9px}
+
+table{width:100%;border-collapse:collapse;font-size:13px;background:white}
+
+th,td{border-bottom:1px solid var(--b);padding:10px;text-align:left;vertical-align:middle}
+
+th{background:#f1f5f9;white-space:nowrap}
+
+.badge,.email-status{display:inline-block;padding:5px 8px;border-radius:15px;font-size:11px;font-weight:bold;white-space:nowrap}
+
+.badge.Present,.email-sent{background:#dcfce7;color:#166534}
+
+.badge.Late{background:#fef3c7;color:#92400e}
+
+.badge.Absent,.email-failed{background:#fee2e2;color:#991b1b}
+
+.badge.Excused{background:#e0e7ff;color:#3730a3}
+
+.email-not-saved{background:#e2e8f0;color:#475569}
+
+.email-not-sent{background:#fef3c7;color:#92400e}
+
+.email-sending{background:#dbeafe;color:#1d4ed8}
+
+.empty{text-align:center;color:var(--m);padding:24px}
+
+footer{text-align:center;padding:18px;color:var(--m);font-size:12px}
+
+.inline-filters{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+
+.inline-filters .field{min-width:130px;flex:1}
+
+.pill{display:inline-block;background:#eef2ff;color:#3730a3;border-radius:20px;padding:5px 9px;font-size:12px}
+
+.progress{height:9px;background:#e2e8f0;border-radius:10px;overflow:hidden;min-width:90px}
+
+.progress span{display:block;height:100%;background:#16a34a}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
 .hidden{display:none!important}
-.small{font-size:13px;color:#617087}
-.danger{color:#c23434;border-color:#e5aaaa}
-.notice{padding:12px;border-radius:8px;background:#eaf3ff;margin:12px 0}
-.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-h2{font-size:21px}
-@media(max-width:600px){
- main{padding:12px}
- header{padding:18px}
- header h1{font-size:21px}
- th,td{padding:8px;font-size:14px}
+
+#historyPanel{border:1px solid var(--b);border-radius:9px;padding:14px;margin-top:14px;background:#f8fafc}
+
+.day-picker{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 5px}
+
+.day-option{display:flex;align-items:center;gap:6px;border:1px solid var(--b);border-radius:8px;padding:9px 12px;background:#f8fafc;font-weight:normal;cursor:pointer}
+
+.day-option input{width:auto;margin:0;accent-color:var(--p)}
+
+@media(max-width:900px){
+
+.app{display:block}
+
+nav{width:100%;display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--b);padding:8px}
+
+nav button{width:auto;min-width:max-content}
+
+main{padding:12px}
+
+.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.grid,.two-col{grid-template-columns:1fr}
+
 }
+
+@media(max-width:500px){
+
+.fields{grid-template-columns:1fr}
+
+.full{grid-column:auto}
+
+.card{padding:13px}
+
+.stats{gap:8px}
+
+.stat{padding:12px}
+
+.stat strong{font-size:23px}
+
+}
+
+@media print{
+
+header,nav,footer,.no-print,.actions button{display:none!important}
+
+.app{display:block}
+
+main{padding:0}
+
+.page{display:none!important}
+
+#reports{display:block!important}
+
+.card{box-shadow:none;border:0;padding:5px}
+
+.table-wrap{overflow:visible}
+
+body{background:white}
+
+}
+
+
+/* ===== Soft blue, teal and lavender visual theme ===== */
+:root{
+ --p:#376b9c;--d:#294d78;--l:#eaf2f8;--bg:#f4f7fb;
+ --t:#263548;--m:#68788d;--b:#dce5ef;--g:#39836f;--r:#bd6268;--o:#b77d42;
+}
+body{background:linear-gradient(145deg,#f4f7fb,#f7f9fc 55%,#eff5f7);color:var(--t)}
+header{background:linear-gradient(115deg,#294d78,#376b9c,#438c91);box-shadow:0 3px 14px #24476b20}
+nav{background:#fff}
+nav button{color:#52647a;transition:background .18s ease,color .18s ease}
+nav button:hover{background:#f0f5fa;color:#315f91}
+nav button.active{background:linear-gradient(100deg,#e8f1fb,#e9f4f2);color:#285d83;border-left:4px solid #4c91a0;padding-left:8px}
+h2{color:#2e5278;padding-bottom:11px;border-bottom:2px solid #dce8f1}
+.card,.stat{border-color:#e0e8f0;box-shadow:0 4px 16px #36516c0a;border-radius:13px}
+.card h3{color:#3b5e7e;padding-bottom:9px;border-bottom:1px solid #edf1f5}
+.stat{position:relative;overflow:hidden}
+.stat:before{content:"";position:absolute;left:0;top:0;width:100%;height:4px;background:#6e9fc5}
+.stat:nth-child(2):before{background:#65a99b}.stat:nth-child(3):before{background:#9b8dc5}.stat:nth-child(4):before{background:#d39a70}
+.stat:nth-child(1){background:linear-gradient(145deg,#fff,#f3f8fd)}
+.stat:nth-child(2){background:linear-gradient(145deg,#fff,#f1f8f6)}
+.stat:nth-child(3){background:linear-gradient(145deg,#fff,#f6f4fb)}
+.stat:nth-child(4){background:linear-gradient(145deg,#fff,#fcf5ef)}
+.stat strong{color:#31577d}
+input,select,textarea{border-color:#d4dfeb}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#75a4c5;box-shadow:0 0 0 3px #75a4c522}
+.btn{background:linear-gradient(135deg,#4779ad,#35679b);transition:filter .15s ease,transform .15s ease}
+.btn:hover:not(:disabled){filter:brightness(1.06);transform:translateY(-1px)}
+.btn.secondary{background:linear-gradient(135deg,#8493a5,#68798c)}
+.btn.green{background:linear-gradient(135deg,#4a9b83,#287c68)}
+.btn.red{background:linear-gradient(135deg,#cf7778,#b6535a)}
+.btn.orange{background:linear-gradient(135deg,#d3a16a,#b77b3d)}
+th{background:#edf3f8;color:#405d79}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#f1f6fa}
+.notice{background:#edf5fb;border-color:#d2e3f0;color:#365e7d}
+.badge.Present,.email-sent{background:#e4f3ed;color:#27745c}
+.badge.Late,.email-not-sent{background:#fbf1df;color:#92672c}
+.badge.Absent,.email-failed{background:#f9e8e8;color:#a34c52}
+.badge.Excused{background:#eeeafa;color:#685b98}
+.email-sending{background:#e7f0fa;color:#356b9c}
+.day-option{background:#f8fafc;border-color:#dce5ee;color:#4b6075}
+.day-option:has(input:checked){background:#e9f3f1;border-color:#83b6a9;color:#326e62}
+#historyPanel{background:#f6f8fc}
+.danger-card{border-left:4px solid #c96f73;background:linear-gradient(135deg,#fcf2f2,#fff)}
+.archive-card{border-left:4px solid #69a895;background:linear-gradient(135deg,#f0f7f4,#fff)}
+.restore-card{border-left:4px solid #6e9fc5;background:linear-gradient(135deg,#f1f7fc,#fff)}
+.day-option input{accent-color:#4b8b91}
+@media(max-width:900px){nav button.active{border-left:0;border-bottom:3px solid #4c91a0;padding-left:12px}}
+
 </style>
+
 </head>
+
 <body>
+
 <header>
-  <h1>School Attendance Monitor</h1>
-  <p>Attendance, grade levels and guardian communication</p>
+
+<div>
+
+<h1 id="headerTitle">School Attendance Monitoring System</h1>
+
+<small id="headerSubtitle">Student records, class schedules and guardian email</small>
+
+</div>
+
+<div id="headerDate"></div>
+
 </header>
 
-<main>
-<nav>
-  <button class="active" data-page="dashboard" onclick="showPage('dashboard',this)">Dashboard</button>
-  <button data-page="grades" onclick="showPage('grades',this)">Grade Levels</button>
-  <button data-page="students" onclick="showPage('students',this)">Students</button>
-  <button data-page="attendance" onclick="showPage('attendance',this)">Attendance</button>
+<div class="app">
+
+<nav id="navigation">
+
+<button class="active" data-page="dashboard">📊 Dashboard</button>
+
+<button data-page="profile">🏫 School Profile & Class Schedule</button>
+
+<button data-page="students">👨‍🎓 Student Records</button>
+
+<button data-page="attendance">📝 Attendance</button>
+
+<button data-page="reports">📄 Reports & Analytics</button>
+
+<button data-page="dataManagement">🗄️ Data Management & Archive</button>
+
 </nav>
 
-<section id="dashboard">
-  <h2>Attendance Dashboard</h2>
-  <p id="today"></p>
-  <div class="cards">
-    <div class="card">Total Students<div class="number" id="total">0</div></div>
-    <div class="card">Present<div class="number" id="present">0</div></div>
-    <div class="card">Late<div class="number" id="late">0</div></div>
-    <div class="card">Absent<div class="number" id="absent">0</div></div>
-  </div>
-  <div class="panel">
-    <h2>Getting Started</h2>
-    <p>1. Add grade levels and sections.</p>
-    <p>2. Register students and guardian contact details.</p>
-    <p>3. Filter students by grade and section.</p>
-    <p>4. Edit student details or correct attendance whenever needed.</p>
-    <p class="small">Prototype: records are stored in this browser. A shared database and real SMS service are not yet connected.</p>
-  </div>
+<main>
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="page active">
+
+<h2>Dashboard</h2>
+
+<div class="stats">
+
+<div class="stat"><span>Total Students</span><strong id="statStudents">0</strong><small>All registered students</small></div>
+
+<div class="stat"><span>Class Schedules</span><strong id="statSchedules">0</strong><small>Saved class assignments</small></div>
+
+<div class="stat"><span>Attendance Performance</span><strong id="statRate">—</strong><small>Based on recorded attendance</small></div>
+
+<div class="stat"><span>Total Absences</span><strong id="statAbsent">0</strong><small id="statAbsentPeriod">All recorded dates</small></div>
+
+</div>
+
+<div class="card no-print">
+
+<h3>Dashboard Filters</h3>
+
+<div class="inline-filters">
+
+<div class="field"><label>From date</label><input type="date" id="dashFrom"></div>
+
+<div class="field"><label>To date</label><input type="date" id="dashTo"></div>
+
+<div class="field"><label>Grade</label><select id="dashGrade"><option value="">All grades</option></select></div>
+
+<div class="field"><label>Section</label><select id="dashSection"><option value="">All sections</option></select></div>
+
+<button class="btn" id="applyDashBtn" type="button">Apply Filters</button>
+
+<button class="btn secondary" id="clearDashBtn" type="button">Clear</button>
+
+</div>
+
+</div>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>Attendance Performance by Grade & Section</h3>
+
+<p class="muted">Attendance rate = (Present + Late) ÷ (Present + Late + Absent). Excused entries are excluded.</p>
+
+<div class="table-wrap">
+
+<table>
+
+<thead><tr><th>Grade / Section</th><th>Present</th><th>Late</th><th>Absent</th><th>Excused</th><th>Attendance</th></tr></thead>
+
+<tbody id="performanceTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Teacher's Class Schedule</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead><tr><th>Grade / Section</th><th>Subject</th><th>Day & Time</th><th>Room</th></tr></thead>
+
+<tbody id="dashboardSchedule"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Students With Most Absences</h3>
+
+<div class="inline-filters no-print">
+
+<div class="field"><label>Ranking order</label><select id="rankOrder"><option value="desc">Most absences first</option><option value="asc">Fewest absences first</option></select></div>
+
+<div class="field"><label>Show</label><select id="rankLimit"><option>5</option><option selected>10</option><option>20</option><option>50</option><option value="all">All students</option></select></div>
+
+<div class="field"><label>Ranking period</label><select id="rankPeriod"><option value="all">All recorded dates</option><option value="month">Current month</option><option value="year">Current school year / calendar year</option><option value="custom">Use dashboard date filters</option></select></div>
+
+<button class="btn" id="refreshRankBtn" type="button">Update Ranking</button>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead><tr><th>Rank</th><th>Student</th><th>Grade / Section</th><th>Absences</th></tr></thead>
+
+<tbody id="topAbsentees"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<div class="card"><h3>Recent Activities</h3><div id="activities" class="muted"></div></div>
+
 </section>
 
-<section id="grades" class="hidden">
-  <h2>Grade Level Management</h2>
-  <div class="panel">
-    <label for="gradeName">New grade level</label>
-    <input id="gradeName" placeholder="e.g. Grade 7">
-    <label for="sections">Sections (separate with commas)</label>
-    <input id="sections" placeholder="e.g. Loyalty, Modesty, Honesty">
-    <button class="primary" onclick="addGrade()">+ Add Grade Level</button>
-  </div>
-  <div class="panel">
-    <h3>Existing Grade Levels</h3>
-    <div id="gradeList"></div>
-  </div>
+<!-- SCHOOL PROFILE AND CLASS SCHEDULE -->
+
+<section id="profile" class="page">
+
+<h2>School Profile & Class Schedule</h2>
+
+<div class="card">
+
+<h3>School Information</h3>
+
+<div class="fields">
+
+<div class="field"><label>School Name</label><input id="schoolName" placeholder="Enter school name"></div>
+
+<div class="field"><label>School Year</label><input id="schoolYear" placeholder="e.g. 2026–2027"></div>
+
+<div class="field full"><label>Teacher's Name</label><input id="teacherName" placeholder="Enter teacher's name"></div>
+
+</div>
+
+<div class="actions">
+
+<button class="btn" id="saveProfileBtn" type="button">Save School Profile</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Class Schedule</h3>
+
+<div class="fields">
+
+<div class="field"><label>Grade Level</label><select id="classGrade"></select></div>
+
+<div class="field"><label>Section</label><input id="classSection" placeholder="Enter section"></div>
+
+<div class="field"><label>Subject</label><input id="classSubject" placeholder="Enter subject"></div>
+
+<div class="field"><label>Classroom</label><input id="classRoom" placeholder="Enter classroom"></div>
+
+<div class="field full">
+
+<label>Days of the Week</label>
+
+<div class="day-picker">
+
+<label class="day-option"><input type="checkbox" name="classDays" value="Monday"> Monday</label>
+
+<label class="day-option"><input type="checkbox" name="classDays" value="Tuesday"> Tuesday</label>
+
+<label class="day-option"><input type="checkbox" name="classDays" value="Wednesday"> Wednesday</label>
+
+<label class="day-option"><input type="checkbox" name="classDays" value="Thursday"> Thursday</label>
+
+<label class="day-option"><input type="checkbox" name="classDays" value="Friday"> Friday</label>
+
+<label class="day-option"><input type="checkbox" name="classDays" value="Saturday"> Saturday</label>
+
+<label class="day-option"><input type="checkbox" name="classDays" value="Sunday"> Sunday</label>
+
+</div>
+
+</div>
+
+<div class="field"><label>Start Time</label><input type="time" id="classStart"></div>
+
+<div class="field"><label>End Time</label><input type="time" id="classEnd"></div>
+
+</div>
+
+<div class="actions">
+
+<button class="btn" id="saveClassBtn" type="button">Save Class Schedule</button>
+
+<button class="btn secondary" id="clearClassBtn" type="button">Clear Form</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Saved Class Schedules</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead><tr><th>Grade</th><th>Section</th><th>Subject</th><th>Days</th><th>Time</th><th>Room</th><th>Action</th></tr></thead>
+
+<tbody id="classTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
 </section>
 
-<section id="students" class="hidden">
-  <h2>Student Records</h2>
+<!-- STUDENT RECORDS -->
 
-  <div class="panel">
-    <h3 id="studentFormTitle">Register New Student</h3>
-    <input type="hidden" id="editStudentId">
+<section id="students" class="page">
 
-    <div class="row">
-      <div>
-        <label for="studentName">Student full name</label>
-        <input id="studentName" placeholder="Student's full name">
-      </div>
-      <div>
-        <label for="studentGrade">Grade level</label>
-        <select id="studentGrade"></select>
-      </div>
-      <div>
-        <label for="studentSection">Section</label>
-        <select id="studentSection"></select>
-      </div>
-      <div>
-        <label for="guardianName">Guardian name</label>
-        <input id="guardianName" placeholder="Guardian's full name">
-      </div>
-      <div>
-        <label for="guardianPhone">Guardian mobile number</label>
-        <input id="guardianPhone" type="tel" placeholder="+63 9XX XXX XXXX">
-      </div>
-    </div>
+<h2>Student Records</h2>
 
-    <div class="actions">
-      <button class="primary" id="studentSubmit" onclick="saveStudent()">+ Add Student</button>
-      <button id="cancelStudentEdit" class="hidden" onclick="cancelStudentEdit()">Cancel Edit</button>
-    </div>
-  </div>
+<div class="card">
 
-  <div class="panel">
-    <h3>Find Students by Class</h3>
-    <div class="filters">
-      <div>
-        <label for="studentFilterGrade">Grade level</label>
-        <select id="studentFilterGrade" onchange="studentGradeFilterChanged()"></select>
-      </div>
-      <div>
-        <label for="studentFilterSection">Section</label>
-        <select id="studentFilterSection" onchange="renderStudents()"></select>
-      </div>
-    </div>
-    <p class="small" id="studentCount"></p>
-  </div>
+<h3>Register Student</h3>
 
-  <div class="panel table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Student</th>
-          <th>Grade / Section</th>
-          <th>Guardian</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="studentList"></tbody>
-    </table>
-  </div>
+<div class="fields">
+
+<div class="field"><label>Student ID</label><input id="studentId" placeholder="Enter student ID"></div>
+
+<div class="field"><label>Student Name</label><input id="studentName" placeholder="Last name, First name"></div>
+
+<div class="field"><label>Grade Level</label><select id="studentGrade"></select></div>
+
+<div class="field"><label>Section</label><select id="studentSection"></select></div>
+
+<div class="field"><label>Guardian Name</label><input id="guardianName" placeholder="Enter guardian name"></div>
+
+<div class="field"><label>Guardian Email</label><input id="guardianEmail" type="email" placeholder="guardian@example.com"></div>
+
+</div>
+
+<div class="actions">
+
+<button class="btn" id="saveStudentBtn" type="button">Save Student</button>
+
+<button class="btn secondary" id="clearStudentBtn" type="button">Clear Form</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Registered Students</h3>
+
+<div class="inline-filters">
+
+<div class="field"><label>Grade</label><select id="filterStudentGrade"></select></div>
+
+<div class="field"><label>Section</label><select id="filterStudentSection"></select></div>
+
+<div class="field"><label>Search Student</label><input id="studentSearch" placeholder="Search by name or ID"></div>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead><tr><th>Student ID</th><th>Student Name</th><th>Grade</th><th>Section</th><th>Guardian</th><th>Guardian Email</th><th>Action</th></tr></thead>
+
+<tbody id="studentTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
 </section>
 
-<section id="attendance" class="hidden">
-  <h2>Daily Attendance</h2>
-  <div class="panel">
-    <div class="filters">
-      <div>
-        <label for="attDate">Attendance date</label>
-        <input id="attDate" type="date" onchange="cancelAttendanceEdit();renderAll()">
-      </div>
-      <div>
-        <label for="filterGrade">Grade level</label>
-        <select id="filterGrade" onchange="attendanceGradeFilterChanged()"></select>
-      </div>
-      <div>
-        <label for="filterSection">Section</label>
-        <select id="filterSection" onchange="cancelAttendanceEdit();renderAttendance()"></select>
-      </div>
-    </div>
+<!-- ATTENDANCE -->
 
-    <div class="notice small">
-      Select a grade and section to check one class at a time. Use Edit to correct a student's attendance status.
-    </div>
+<section id="attendance" class="page">
 
-    <div class="actions">
-      <button onclick="markAllPresent()">Mark All Present</button>
-      <button onclick="clearClassAttendance()" class="danger">Clear Class Attendance</button>
-    </div>
+<h2>Attendance</h2>
 
-    <p id="attendanceCount" class="small"></p>
+<div class="card">
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Student</th><th>Section</th><th>Status / Actions</th></tr>
-        </thead>
-        <tbody id="attendanceList"></tbody>
-      </table>
-    </div>
-  </div>
+<h3>Class Attendance</h3>
+
+<div class="fields">
+
+<div class="field"><label>Attendance Date</label><input type="date" id="attendanceDate"></div>
+
+<div class="field"><label>Grade Level</label><select id="attendanceGrade"></select></div>
+
+<div class="field"><label>Section</label><select id="attendanceSection"></select></div>
+
+<div class="field"><label>Subject</label><select id="attendanceSubject"></select></div>
+
+</div>
+
+<div class="actions">
+
+<button class="btn" id="loadRosterBtn" type="button">Load Class Roster</button>
+
+</div>
+
+<div class="notice">
+
+Mark each student's attendance as Present, Late, Absent, or Excused. Save the attendance first. After saving, the email button for each student will be enabled so you can send an individual notification to the guardian.
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead><tr><th>Student ID</th><th>Student Name</th><th>Attendance Status</th><th>Remarks</th><th>Guardian Email</th><th>Email Notification</th></tr></thead>
+
+<tbody id="rosterTable"><tr><td colspan="6" class="empty">Choose a class and load the roster.</td></tr></tbody>
+
+</table>
+
+</div>
+
+<div class="actions">
+
+<button class="btn green" id="saveAttendanceBtn" type="button">Save Attendance</button>
+
+</div>
+
+</div>
+
 </section>
+
+<!-- REPORTS -->
+
+<section id="reports" class="page">
+
+<h2>Reports & Analytics</h2>
+
+<div class="card no-print">
+
+<h3>Report Filters</h3>
+
+<div class="inline-filters">
+
+<div class="field"><label>From Date</label><input type="date" id="reportFrom"></div>
+
+<div class="field"><label>To Date</label><input type="date" id="reportTo"></div>
+
+<div class="field"><label>Grade</label><select id="reportGrade"></select></div>
+
+<div class="field"><label>Section</label><select id="reportSection"></select></div>
+
+<div class="field"><label>Subject</label><select id="reportSubject"></select></div>
+
+<div class="field"><label>Status</label><select id="reportStatus"><option value="">All statuses</option><option>Present</option><option>Late</option><option>Absent</option><option>Excused</option></select></div>
+
+</div>
+
+<div class="actions">
+
+<button class="btn" id="generateReportBtn" type="button">Generate Report</button>
+
+<button class="btn green" id="exportReportBtn" type="button">Export CSV</button>
+
+<button class="btn secondary" id="printReportBtn" type="button">Print Report</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Attendance Report</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead><tr><th>Date</th><th>Student</th><th>Grade</th><th>Section</th><th>Subject</th><th>Status</th><th>Remarks</th><th>Email Status</th></tr></thead>
+
+<tbody id="reportTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<div class="card no-print">
+
+<h3>Backup & Restore</h3>
+
+<p class="muted">Download a copy of your school profile, class schedules, student records, attendance records and activities. Keep your backup in a safe location.</p>
+
+<div class="actions">
+
+<button class="btn green" id="backupBtn" type="button">Download Backup (JSON)</button>
+
+<label class="btn secondary" for="restoreFile" style="display:inline-block">Restore Backup (JSON)</label>
+
+<input id="restoreFile" type="file" accept=".json,application/json" style="display:none">
+
+</div>
+
+</div>
+
+</section>
+
+<!-- DATA MANAGEMENT AND ARCHIVE -->
+
+<section id="dataManagement" class="page">
+
+<h2>Data Management & Archive</h2>
+
+<div class="notice">
+
+Manage your Attendance App data carefully. Create an archive before resetting the application. Restoring an archive will replace the data currently saved in this browser.
+
+</div>
+
+<div class="card archive-card">
+
+<h3>1. Archive & Reset</h3>
+
+<p>Download a complete archive of your school profile, class schedules, student records, attendance records, email template and activity history. After the archive download is initiated, the app data saved in this browser will be cleared so you can start with a fresh database.</p>
+
+<div class="actions">
+
+<button class="btn green" id="archiveResetBtn" type="button">Download Archive & Reset App</button>
+
+</div>
+
+</div>
+
+<div class="card restore-card">
+
+<h3>2. Restore from Archive</h3>
+
+<p>Select a previously downloaded Attendance App archive in JSON format. The archive will replace the data currently stored in this browser.</p>
+
+<div class="actions">
+
+<label class="btn" for="archiveRestoreFile" style="display:inline-block">Choose Archive File</label>
+
+<input id="archiveRestoreFile" type="file" accept=".json,application/json" style="display:none">
+
+</div>
+
+</div>
+
+<div class="card danger-card">
+
+<h3>3. Delete All Permanently</h3>
+
+<p>This permanently deletes all Attendance App data saved in this browser without creating an archive. This action cannot be undone unless you have a separate backup file.</p>
+
+<div class="actions">
+
+<button class="btn red" id="deleteAllBtn" type="button">Permanently Delete All Data</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Current Data Summary</h3>
+
+<div class="stats">
+
+<div class="stat"><span>Registered Students</span><strong id="dataStudentCount">0</strong></div>
+
+<div class="stat"><span>Class Schedules</span><strong id="dataClassCount">0</strong></div>
+
+<div class="stat"><span>Attendance Records</span><strong id="dataRecordCount">0</strong></div>
+
+<div class="stat"><span>Activity Entries</span><strong id="dataActivityCount">0</strong></div>
+
+</div>
+
+<p class="muted">The counts above reflect the data currently stored in this browser.</p>
+
+</div>
+
+</section>
+
 </main>
 
+</div>
+
+<footer>School Attendance Monitoring System</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 <script>
-const $ = id => document.getElementById(id);
 
-let grades = [];
-let students = [];
-let records = {};
-let editingAttendanceKey = null;
+const EMAILJS_PUBLIC_KEY = "PbRDs3pbsI232g1vA";
+const EMAILJS_SERVICE_ID = "service_zs6213u";
+const EMAILJS_TEMPLATE_ID = "template_fmicdaa";
 
-function loadData(){
-  try{
-    grades = JSON.parse(localStorage.getItem('attendance_grades') || '[]');
-    students = JSON.parse(localStorage.getItem('attendance_students') || '[]');
-    records = JSON.parse(localStorage.getItem('attendance_records') || '{}');
+emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
 
-    if(!Array.isArray(grades)) grades = [];
-    if(!Array.isArray(students)) students = [];
-    if(!records || typeof records !== 'object') records = {};
-  }catch(error){
-    alert('Saved data could not be read. Please do not clear browser storage.');
-    grades = [];
-    students = [];
-    records = {};
-  }
+const K={
+ grades:"attendance_grades",
+ students:"attendance_students",
+ records:"attendance_records",
+ teacher:"attendance_teacher_name",
+ activities:"attendance_activities",
+ classes:"attendance_class_assignments",
+ template:"attendance_email_template",
+ schoolName:"attendance_school_name",
+ schoolYear:"attendance_school_year"
+};
+
+function read(k,fallback){
+ try{
+  const x=localStorage.getItem(k);
+  return x===null?fallback:JSON.parse(x);
+ }catch(e){return fallback}
 }
 
-function saveData(){
-  try{
-    localStorage.setItem('attendance_grades',JSON.stringify(grades));
-    localStorage.setItem('attendance_students',JSON.stringify(students));
-    localStorage.setItem('attendance_records',JSON.stringify(records));
-  }catch(error){
-    alert('The browser could not save the data. Check available browser storage.');
-  }
+function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+function esc(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-function esc(value){
-  return String(value ?? '').replace(/[&<>"']/g,c=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
+function today(){
+ const d=new Date();
+ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 
-function showPage(id,button){
-  cancelAttendanceEdit();
-  document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
-  $(id).classList.remove('hidden');
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  button.classList.add('active');
-  renderAll();
+function activity(message){
+ const a=read(K.activities,[]);
+ a.unshift({date:today(),message});
+ write(K.activities,a.slice(0,100));
 }
 
-function addGrade(){
-  const name = $('gradeName').value.trim();
-  const sections = [...new Set(
-    $('sections').value.split(',').map(s=>s.trim()).filter(Boolean)
-  )];
+function students(){return read(K.students,[])}
+function records(){return read(K.records,[])}
+function classes(){return read(K.classes,[])}
+function grades(){return read(K.grades,[])}
 
-  if(!name) return alert('Enter a grade level.');
-  if(grades.some(g=>g.name.toLowerCase()===name.toLowerCase())){
-    return alert('This grade level already exists.');
-  }
+function unique(a){return [...new Set(a.filter(Boolean))].sort((x,y)=>String(x).localeCompare(String(y),undefined,{numeric:true}))}
 
-  grades.push({id:Date.now(),name,sections});
-  $('gradeName').value='';
-  $('sections').value='';
-  saveData();
-  renderAll();
-  alert('Grade level added.');
+function options(el,values,first="Select"){
+ const old=el.value;
+ el.innerHTML=`<option value="">${first}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
+ if(values.includes(old))el.value=old;
 }
 
-function saveStudent(){
-  const editId = $('editStudentId').value;
-  const name = $('studentName').value.trim();
-  const grade = $('studentGrade').value;
-  const section = $('studentSection').value;
-
-  if(!name) return alert('Enter the student name.');
-  if(!grade) return alert('Add or select a grade level first.');
-  if(!section) return alert('Select a section.');
-
-  const details = {
-    name,
-    grade,
-    section,
-    guardian:$('guardianName').value.trim(),
-    phone:$('guardianPhone').value.trim()
-  };
-
-  if(editId){
-    const student = students.find(s=>String(s.id)===editId);
-    if(!student) return alert('Student record not found.');
-
-    // Preserve the student's ID so attendance history remains linked.
-    Object.assign(student,details);
-    alert('Student details updated successfully.');
-  }else{
-    students.push({id:Date.now(),...details});
-    alert('Student added successfully.');
-  }
-
-  cancelStudentEdit();
-  saveData();
-  renderAll();
+function sections(g){
+ return unique(students().filter(s=>!g||s.grade===g).map(s=>s.section));
 }
 
-function editStudent(id){
-  const student = students.find(s=>s.id===id);
-  if(!student) return;
-
-  $('editStudentId').value=String(student.id);
-  $('studentName').value=student.name;
-  $('studentGrade').value=student.grade;
-  renderStudentSections();
-
-  $('studentSection').value=student.section;
-  $('guardianName').value=student.guardian || '';
-  $('guardianPhone').value=student.phone || '';
-  $('studentFormTitle').textContent='Edit Student Details';
-  $('studentSubmit').textContent='Save Changes';
-  $('cancelStudentEdit').classList.remove('hidden');
-
-  $('studentName').scrollIntoView({behavior:'smooth',block:'center'});
-  $('studentName').focus();
+function subjects(g,s){
+ return unique(classes().filter(c=>(!g||c.grade===g)&&(!s||c.section===s)).map(c=>c.subject));
 }
 
-function cancelStudentEdit(){
-  $('editStudentId').value='';
-  $('studentName').value='';
-  $('guardianName').value='';
-  $('guardianPhone').value='';
-  $('studentFormTitle').textContent='Register New Student';
-  $('studentSubmit').textContent='+ Add Student';
-  $('cancelStudentEdit').classList.add('hidden');
-  renderStudentSections();
+function goPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ if(id==="dashboard")refreshDashboard();
+ if(id==="dataManagement")renderDataSummary();
 }
 
-function deleteStudent(id){
-  const student = students.find(s=>s.id===id);
-  if(!student) return;
+document.getElementById("navigation").addEventListener("click",e=>{
+ const b=e.target.closest("button[data-page]");
+ if(b)goPage(b.dataset.page);
+});
 
-  if(!confirm('Delete '+student.name+' and all their attendance records?')) return;
+document.getElementById("headerDate").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"});
 
-  students = students.filter(s=>s.id!==id);
-  Object.keys(records).forEach(key=>{
-    if(key.endsWith('-'+id)) delete records[key];
-  });
-
-  if($('editStudentId').value===String(id)) cancelStudentEdit();
-
-  saveData();
-  renderAll();
+function loadProfile(){
+ document.getElementById("schoolName").value=localStorage.getItem(K.schoolName)||"";
+ document.getElementById("schoolYear").value=localStorage.getItem(K.schoolYear)||"";
+ document.getElementById("teacherName").value=localStorage.getItem(K.teacher)||"";
+ const school=localStorage.getItem(K.schoolName)||"";
+ document.getElementById("headerTitle").textContent=school||"School Attendance Monitoring System";
 }
 
-function deleteGrade(id){
-  const grade = grades.find(g=>g.id===id);
-  if(!grade) return;
+document.getElementById("saveProfileBtn").onclick=()=>{
+ localStorage.setItem(K.schoolName,document.getElementById("schoolName").value.trim());
+ localStorage.setItem(K.schoolYear,document.getElementById("schoolYear").value.trim());
+ localStorage.setItem(K.teacher,document.getElementById("teacherName").value.trim());
+ loadProfile();
+ activity("Updated school profile");
+ refreshAll();
+ alert("School profile saved.");
+};
 
-  if(students.some(s=>s.grade===grade.name)){
-    return alert('This grade has students. Move those students before deleting the grade.');
-  }
-
-  if(!confirm('Delete '+grade.name+'?')) return;
-  grades = grades.filter(g=>g.id!==id);
-  saveData();
-  renderAll();
+function clearClass(){
+ ["classSection","classSubject","classRoom","classStart","classEnd"].forEach(id=>document.getElementById(id).value="");
+ document.querySelectorAll('input[name="classDays"]').forEach(x=>x.checked=false);
+ document.getElementById("classGrade").value="";
 }
 
-function renderGrades(){
-  $('gradeList').innerHTML = grades.length
-    ? grades.map(g=>`
-      <div class="panel">
-        <strong>${esc(g.name)}</strong>
-        <p>Sections: ${g.sections.length ? g.sections.map(esc).join(', ') : 'None'}</p>
-        <button class="danger" onclick="deleteGrade(${g.id})">Delete Grade</button>
-      </div>
-    `).join('')
-    : 'No grade levels added yet.';
+document.getElementById("clearClassBtn").onclick=clearClass;
+
+function classDays(c){
+ return Array.isArray(c.days)?c.days:(c.day?[c.day]:[]);
 }
 
-function setOptions(selectId,items,firstLabel,selected){
-  const select = $(selectId);
-  select.innerHTML =
-    `<option value="">${esc(firstLabel)}</option>` +
-    items.map(item=>`<option value="${esc(item)}">${esc(item)}</option>`).join('');
-
-  if(items.includes(selected)) select.value=selected;
+function classTime(c){
+ return [c.start||"",c.end||""].filter(Boolean).join(" – ");
 }
 
-function renderGradeOptions(){
-  const gradeNames = grades.map(g=>g.name);
+function renderClasses(){
+ const a=classes();
+ document.getElementById("classTable").innerHTML=a.map((c,i)=>`
+ <tr>
+ <td>${esc(c.grade)}</td><td>${esc(c.section)}</td><td>${esc(c.subject)}</td>
+ <td>${esc(classDays(c).join(", "))}</td><td>${esc(classTime(c))}</td><td>${esc(c.room||"")}</td>
+ <td><button class="btn red small" onclick="deleteClass(${i})">Delete</button></td>
+ </tr>
+ `).join("")||'<tr><td colspan="7" class="empty">No class schedules saved.</td></tr>';
 
-  const oldStudentGrade = $('studentGrade').value;
-  const oldStudentFilter = $('studentFilterGrade').value;
-  const oldAttendanceGrade = $('filterGrade').value;
-
-  setOptions('studentGrade',gradeNames,'Select grade',oldStudentGrade);
-  setOptions('studentFilterGrade',gradeNames,'All grades',oldStudentFilter);
-  setOptions('filterGrade',gradeNames,'All grades',oldAttendanceGrade);
-
-  renderStudentSections();
-  renderStudentFilterSections();
-  renderAttendanceFilterSections();
+ document.getElementById("dashboardSchedule").innerHTML=a.map(c=>`
+ <tr><td>${esc(c.grade)} / ${esc(c.section)}</td><td>${esc(c.subject)}</td>
+ <td>${esc(classDays(c).join(", "))} ${esc(classTime(c))}</td><td>${esc(c.room||"")}</td></tr>
+ `).join("")||'<tr><td colspan="4" class="empty">No class schedules saved.</td></tr>';
 }
 
-function renderStudentSections(){
-  const grade = grades.find(g=>g.name===$('studentGrade').value);
-  const sections = grade ? grade.sections : [];
-  setOptions('studentSection',sections,'Select section',$('studentSection').value);
+document.getElementById("saveClassBtn").onclick=()=>{
+ const days=[...document.querySelectorAll('input[name="classDays"]:checked')].map(x=>x.value);
+ const c={
+  grade:document.getElementById("classGrade").value,
+  section:document.getElementById("classSection").value.trim(),
+  subject:document.getElementById("classSubject").value.trim(),
+  room:document.getElementById("classRoom").value.trim(),
+  days,
+  start:document.getElementById("classStart").value,
+  end:document.getElementById("classEnd").value
+ };
+ if(!c.grade||!c.section||!c.subject||!days.length||!c.start||!c.end){
+  alert("Please complete grade, section, subject, at least one day, start time and end time.");
+  return;
+ }
+ if(c.end<=c.start){alert("End time must be later than start time.");return}
+ const a=classes();
+ a.push(c);
+ write(K.classes,a);
+ activity("Added class schedule: "+c.grade+" "+c.section+" - "+c.subject);
+ clearClass();
+ refreshAll();
+ alert("Class schedule saved.");
+};
+
+function deleteClass(i){
+ if(!confirm("Delete this class schedule?"))return;
+ const a=classes();
+ a.splice(i,1);
+ write(K.classes,a);
+ activity("Deleted a class schedule");
+ refreshAll();
 }
 
-function renderStudentFilterSections(){
-  const gradeName = $('studentFilterGrade').value;
-  const grade = grades.find(g=>g.name===gradeName);
-  const sections = grade ? grade.sections : [];
-  const selected = $('studentFilterSection').value;
-
-  setOptions(
-    'studentFilterSection',
-    sections,
-    gradeName ? 'All sections' : 'Select a grade first',
-    selected
-  );
+function refreshSelectors(){
+ const gs=unique([...grades(),...classes().map(c=>c.grade),...students().map(s=>s.grade)]);
+ ["classGrade","studentGrade","attendanceGrade","reportGrade","dashGrade","filterStudentGrade"].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)options(el,gs,"All grades");
+ });
+ options(document.getElementById("studentSection"),sections(document.getElementById("studentGrade").value),"Select section");
+ options(document.getElementById("filterStudentSection"),sections(document.getElementById("filterStudentGrade").value),"All sections");
+ options(document.getElementById("attendanceSection"),sections(document.getElementById("attendanceGrade").value),"Select section");
+ options(document.getElementById("attendanceSubject"),subjects(document.getElementById("attendanceGrade").value,document.getElementById("attendanceSection").value),"Select subject");
+ options(document.getElementById("reportSection"),sections(document.getElementById("reportGrade").value),"All sections");
+ options(document.getElementById("reportSubject"),subjects(document.getElementById("reportGrade").value,document.getElementById("reportSection").value),"All subjects");
+ options(document.getElementById("dashSection"),sections(document.getElementById("dashGrade").value),"All sections");
 }
 
-function renderAttendanceFilterSections(){
-  const gradeName = $('filterGrade').value;
-  const grade = grades.find(g=>g.name===gradeName);
-  const sections = grade ? grade.sections : [];
-  const selected = $('filterSection').value;
+document.getElementById("studentGrade").onchange=()=>options(document.getElementById("studentSection"),sections(document.getElementById("studentGrade").value),"Select section");
 
-  setOptions(
-    'filterSection',
-    sections,
-    gradeName ? 'All sections' : 'Select a grade first',
-    selected
-  );
+document.getElementById("filterStudentGrade").onchange=()=>options(document.getElementById("filterStudentSection"),sections(document.getElementById("filterStudentGrade").value),"All sections");
+
+document.getElementById("attendanceGrade").onchange=()=>{
+ options(document.getElementById("attendanceSection"),sections(document.getElementById("attendanceGrade").value),"Select section");
+ options(document.getElementById("attendanceSubject"),subjects(document.getElementById("attendanceGrade").value,""),"Select subject");
+};
+
+document.getElementById("attendanceSection").onchange=()=>{
+ options(document.getElementById("attendanceSubject"),subjects(document.getElementById("attendanceGrade").value,document.getElementById("attendanceSection").value),"Select subject");
+};
+
+document.getElementById("reportGrade").onchange=()=>{
+ options(document.getElementById("reportSection"),sections(document.getElementById("reportGrade").value),"All sections");
+ options(document.getElementById("reportSubject"),subjects(document.getElementById("reportGrade").value,""),"All subjects");
+};
+
+document.getElementById("reportSection").onchange=()=>{
+ options(document.getElementById("reportSubject"),subjects(document.getElementById("reportGrade").value,document.getElementById("reportSection").value),"All subjects");
+};
+
+document.getElementById("dashGrade").onchange=()=>{
+ options(document.getElementById("dashSection"),sections(document.getElementById("dashGrade").value),"All sections");
+ refreshDashboard();
+};
+
+function clearStudent(){
+ ["studentId","studentName","guardianName","guardianEmail"].forEach(id=>document.getElementById(id).value="");
+ document.getElementById("studentGrade").value="";
+ options(document.getElementById("studentSection"),[],"Select section");
 }
 
-function studentGradeFilterChanged(){
-  $('studentFilterSection').value='';
-  renderStudentFilterSections();
-  renderStudents();
-}
+document.getElementById("clearStudentBtn").onclick=clearStudent;
 
-function attendanceGradeFilterChanged(){
-  $('filterSection').value='';
-  cancelAttendanceEdit();
-  renderAttendanceFilterSections();
-  renderAttendance();
-}
+document.getElementById("saveStudentBtn").onclick=()=>{
+ const s={
+  id:document.getElementById("studentId").value.trim(),
+  name:document.getElementById("studentName").value.trim(),
+  grade:document.getElementById("studentGrade").value,
+  section:document.getElementById("studentSection").value,
+  guardian:document.getElementById("guardianName").value.trim(),
+  email:document.getElementById("guardianEmail").value.trim()
+ };
+ if(!s.id||!s.name||!s.grade||!s.section){
+  alert("Please complete student ID, name, grade and section.");
+  return;
+ }
+ const a=students();
+ if(a.some(x=>x.id===s.id)){alert("Student ID already exists.");return}
+ a.push(s);
+ write(K.students,a);
+ activity("Registered student: "+s.name);
+ clearStudent();
+ refreshAll();
+ alert("Student saved.");
+};
 
 function renderStudents(){
-  const grade = $('studentFilterGrade').value;
-  const section = $('studentFilterSection').value;
-
-  const list = students.filter(s=>
-    (!grade || s.grade===grade) &&
-    (!section || s.section===section)
-  );
-
-  $('studentCount').textContent =
-    'Showing '+list.length+' of '+students.length+' students.';
-
-  $('studentList').innerHTML = list.length
-    ? list.map(s=>`
-      <tr>
-        <td>${esc(s.name)}</td>
-        <td>${esc(s.grade)} / ${esc(s.section)}</td>
-        <td>${esc(s.guardian)}<br>${esc(s.phone)}</td>
-        <td>
-          <div class="actions">
-            <button class="primary" onclick="editStudent(${s.id})">Edit</button>
-            <button class="danger" onclick="deleteStudent(${s.id})">Delete</button>
-          </div>
-        </td>
-      </tr>
-    `).join('')
-    : '<tr><td colspan="4">No students found for this selection.</td></tr>';
+ const fg=document.getElementById("filterStudentGrade").value;
+ const fs=document.getElementById("filterStudentSection").value;
+ const q=document.getElementById("studentSearch").value.toLowerCase();
+ const a=students().filter(s=>(!fg||s.grade===fg)&&(!fs||s.section===fs)&&(!q||s.name.toLowerCase().includes(q)||s.id.toLowerCase().includes(q)));
+ document.getElementById("studentTable").innerHTML=a.map(s=>`
+ <tr><td>${esc(s.id)}</td><td>${esc(s.name)}</td><td>${esc(s.grade)}</td><td>${esc(s.section)}</td>
+ <td>${esc(s.guardian||"")}</td><td>${esc(s.email||"")}</td>
+ <td><button class="btn red small" onclick="deleteStudent('${esc(s.id)}')">Delete</button></td></tr>
+ `).join("")||'<tr><td colspan="7" class="empty">No students found.</td></tr>';
 }
 
-function renderAttendance(){
-  const date = $('attDate').value;
-  const grade = $('filterGrade').value;
-  const section = $('filterSection').value;
+document.getElementById("filterStudentSection").onchange=renderStudents;
+document.getElementById("studentSearch").oninput=renderStudents;
 
-  const list = students.filter(s=>
-    (!grade || s.grade===grade) &&
-    (!section || s.section===section)
-  );
-
-  $('attendanceCount').textContent =
-    'Showing '+list.length+' students for '+(date||'the selected date')+'.';
-
-  $('attendanceList').innerHTML = list.length
-    ? list.map(s=>{
-      const key = date+'-'+s.id;
-      const status = records[key] || 'Unmarked';
-
-      if(editingAttendanceKey===key){
-        return `<tr>
-          <td>${esc(s.name)}</td>
-          <td>${esc(s.section)}</td>
-          <td>
-            <select id="editStatus-${s.id}">
-              ${['Unmarked','Present','Late','Absent'].map(v=>
-                `<option value="${v}" ${v===status?'selected':''}>${v}</option>`
-              ).join('')}
-            </select>
-            <div class="actions">
-              <button class="primary" onclick="saveAttendance(${s.id})">Save</button>
-              <button onclick="cancelAttendanceEdit()">Cancel</button>
-            </div>
-          </td>
-        </tr>`;
-      }
-
-      return `<tr>
-        <td>${esc(s.name)}</td>
-        <td>${esc(s.section)}</td>
-        <td>
-          <span class="status ${status}">${esc(status)}</span>
-          <div class="actions">
-            <button class="primary" onclick="startAttendanceEdit(${s.id})">Edit</button>
-          </div>
-        </td>
-      </tr>`;
-    }).join('')
-    : '<tr><td colspan="3">No students found. Check the grade and section filters.</td></tr>';
+function deleteStudent(id){
+ if(!confirm("Delete this student and all of the student's attendance records?"))return;
+ write(K.students,students().filter(s=>s.id!==id));
+ write(K.records,records().filter(r=>r.studentId!==id));
+ activity("Deleted student ID: "+id);
+ refreshAll();
 }
 
-function startAttendanceEdit(id){
-  editingAttendanceKey = $('attDate').value+'-'+id;
-  renderAttendance();
+document.getElementById("attendanceDate").value=today();
+
+let roster=[];
+
+function loadRoster(){
+ const date=document.getElementById("attendanceDate").value;
+ const grade=document.getElementById("attendanceGrade").value;
+ const section=document.getElementById("attendanceSection").value;
+ const subject=document.getElementById("attendanceSubject").value;
+ if(!date||!grade||!section||!subject){
+  alert("Please select date, grade, section and subject.");
+  return;
+ }
+ roster=students().filter(s=>s.grade===grade&&s.section===section);
+ if(!roster.length){
+  alert("No students are registered in this class.");
+  return;
+ }
+ const existing=records().filter(r=>r.date===date&&r.grade===grade&&r.section===section&&r.subject===subject);
+ document.getElementById("rosterTable").innerHTML=roster.map(s=>{
+  const old=existing.find(r=>r.studentId===s.id);
+  return `<tr data-student="${esc(s.id)}">
+   <td>${esc(s.id)}</td><td>${esc(s.name)}</td>
+   <td><select class="attendance-status">
+    <option ${old?.status==="Present"?"selected":""}>Present</option>
+    <option ${old?.status==="Late"?"selected":""}>Late</option>
+    <option ${old?.status==="Absent"?"selected":""}>Absent</option>
+    <option ${old?.status==="Excused"?"selected":""}>Excused</option>
+   </select></td>
+   <td><input class="attendance-remarks" value="${esc(old?.remarks||"")}" placeholder="Optional remarks"></td>
+   <td>${esc(s.email||"Not provided")}</td>
+   <td><span class="email-status email-not-saved">Save attendance first</span></td>
+  </tr>`;
+ }).join("");
 }
 
-function saveAttendance(id){
-  const key = $('attDate').value+'-'+id;
-  const select = $('editStatus-'+id);
-  if(!select) return;
+document.getElementById("loadRosterBtn").onclick=loadRoster;
 
-  if(select.value==='Unmarked'){
-    delete records[key];
-  }else{
-    records[key]=select.value;
-  }
-
-  editingAttendanceKey=null;
-  saveData();
-  renderAll();
-}
-
-function cancelAttendanceEdit(){
-  editingAttendanceKey=null;
-}
-
-function markAllPresent(){
-  const date = $('attDate').value;
-  const grade = $('filterGrade').value;
-  const section = $('filterSection').value;
-
-  if(!date) return alert('Select an attendance date first.');
-  if(!grade || !section){
-    return alert('Select both a grade level and section before marking all students Present.');
-  }
-
-  const list = students.filter(s=>s.grade===grade && s.section===section);
-  if(!list.length) return alert('There are no students in this section.');
-
-  if(!confirm('Mark all '+list.length+' students in '+grade+' / '+section+' as Present for '+date+'?')) return;
-
-  list.forEach(s=>records[date+'-'+s.id]='Present');
-  editingAttendanceKey=null;
-  saveData();
-  renderAll();
-}
-
-function clearClassAttendance(){
-  const date = $('attDate').value;
-  const grade = $('filterGrade').value;
-  const section = $('filterSection').value;
-
-  if(!date || !grade || !section){
-    return alert('Select a date, grade level, and section first.');
-  }
-
-  const list = students.filter(s=>s.grade===grade && s.section===section);
-  if(!list.length) return alert('No students found in this section.');
-
-  if(!confirm('Clear all attendance records for '+grade+' / '+section+' on '+date+'?')) return;
-
-  list.forEach(s=>delete records[date+'-'+s.id]);
-  editingAttendanceKey=null;
-  saveData();
-  renderAll();
-}
-
-function renderDashboard(){
-  const date = $('attDate').value;
-  $('total').textContent=students.length;
-
-  ['Present','Late','Absent'].forEach(status=>{
-    $(status.toLowerCase()).textContent=students.filter(
-      s=>records[date+'-'+s.id]===status
-    ).length;
+document.getElementById("saveAttendanceBtn").onclick=()=>{
+ if(!roster.length){alert("Please load the class roster first.");return}
+ const date=document.getElementById("attendanceDate").value;
+ const grade=document.getElementById("attendanceGrade").value;
+ const section=document.getElementById("attendanceSection").value;
+ const subject=document.getElementById("attendanceSubject").value;
+ const all=records().filter(r=>!(r.date===date&&r.grade===grade&&r.section===section&&r.subject===subject));
+ const rows=[...document.querySelectorAll("#rosterTable tr[data-student]")];
+ rows.forEach(row=>{
+  const id=row.dataset.student;
+  const st=students().find(s=>s.id===id);
+  if(!st)return;
+  all.push({
+   date,studentId:id,studentName:st.name,grade,section,subject,
+   status:row.querySelector(".attendance-status").value,
+   remarks:row.querySelector(".attendance-remarks").value.trim(),
+   emailStatus:"Not Sent"
   });
+ });
+ write(K.records,all);
+ activity("Saved attendance for "+grade+" / "+section+" - "+subject+" on "+date);
+ refreshAll();
+ rows.forEach(row=>{
+  const status=row.querySelector(".attendance-status").value;
+  const s=students().find(x=>x.id===row.dataset.student);
+  const cell=row.children[5];
+  if(s&&s.email){
+   cell.innerHTML=`<button class="btn small green" type="button" onclick="sendGuardianEmail('${esc(s.id)}','${esc(date)}','${esc(grade)}','${esc(section)}','${esc(subject)}',this)">Send Email</button><br><span class="email-status email-not-sent">Not Sent</span>`;
+  }else{
+   cell.innerHTML='<span class="email-status email-failed">No guardian email</span>';
+  }
+ });
+ alert("Attendance saved. Individual guardian email buttons are now available.");
+};
+
+function buildEmailBody(tmpl,v){
+ return tmpl.replace(/\{(student|grade|section|subject|status|date|teacher|guardian|remarks)\}/g,(_,k)=>v[k]??"");
 }
 
-function renderAll(){
-  renderGrades();
-  renderGradeOptions();
-  renderStudents();
-  renderAttendance();
-  renderDashboard();
+async function sendGuardianEmail(studentId,date,grade,section,subject,button){
+ const st=students().find(s=>s.id===studentId);
+ const rec=records().find(r=>r.studentId===studentId&&r.date===date&&r.grade===grade&&r.section===section&&r.subject===subject);
+ if(!st||!rec){alert("Student or attendance record not found.");return}
+ if(!st.email){alert("No guardian email address is saved for this student.");return}
+ const cell=button.parentElement;
+ const statusEl=cell.querySelector(".email-status");
+ const teacher=localStorage.getItem(K.teacher)||"";
+ const school=localStorage.getItem(K.schoolName)||"School";
+ const defaultTemplate="Dear {guardian},\n\nThis is to inform you that {student} was marked {status} in {subject} on {date}.\n\nGrade/Section: {grade} - {section}\nRemarks: {remarks}\n\nRegards,\n{teacher}\n{school}";
+ const template=localStorage.getItem(K.template)||defaultTemplate;
+ const vars={
+  student:st.name,grade,section,subject,status:rec.status,date,
+  teacher,guardian:st.guardian||"Parent/Guardian",remarks:rec.remarks||"None",
+  school
+ };
+ const message=buildEmailBody(template,vars);
+ button.disabled=true;
+ button.textContent="Sending...";
+ statusEl.className="email-status email-sending";
+ statusEl.textContent="Sending";
+ try{
+  await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
+   to_email:st.email,
+   to_name:st.guardian||"Parent/Guardian",
+   student_name:st.name,
+   grade,section,subject,
+   attendance_status:rec.status,
+   attendance_date:date,
+   teacher_name:teacher,
+   school_name:school,
+   guardian_name:st.guardian||"Parent/Guardian",
+   remarks:rec.remarks||"None",
+   message
+  });
+  statusEl.className="email-status email-sent";
+  statusEl.textContent="Sent";
+  rec.emailStatus="Sent";
+  write(K.records,records().map(r=>r.studentId===studentId&&r.date===date&&r.grade===grade&&r.section===section&&r.subject===subject?{...r,emailStatus:"Sent"}:r));
+  activity("Guardian email sent for "+st.name+" ("+date+")");
+ }catch(err){
+  statusEl.className="email-status email-failed";
+  statusEl.textContent="Failed";
+  alert("Email could not be sent. Check the EmailJS configuration and internet connection.");
+  console.error(err);
+ }finally{
+  button.disabled=false;
+  button.textContent="Send Email";
+ }
 }
 
-function localDateString(date){
-  return date.getFullYear()+'-'+
-    String(date.getMonth()+1).padStart(2,'0')+'-'+
-    String(date.getDate()).padStart(2,'0');
+document.getElementById("reportFrom").value="";
+document.getElementById("reportTo").value="";
+
+function statusHTML(r){
+ const c=r.emailStatus==="Sent"?"email-sent":r.emailStatus==="Failed"?"email-failed":"email-not-sent";
+ return `<span class="email-status ${c}">${esc(r.emailStatus||"Not Sent")}</span>`;
 }
 
-$('studentGrade').addEventListener('change',renderStudentSections);
+function generateReport(){
+ const f=document.getElementById("reportFrom").value;
+ const t=document.getElementById("reportTo").value;
+ const g=document.getElementById("reportGrade").value;
+ const s=document.getElementById("reportSection").value;
+ const sub=document.getElementById("reportSubject").value;
+ const st=document.getElementById("reportStatus").value;
+ const a=records().filter(r=>dateWithin(r,f,t)&&(!g||r.grade===g)&&(!s||r.section===s)&&(!sub||r.subject===sub)&&(!st||r.status===st))
+ .sort((x,y)=>y.date.localeCompare(x.date)||x.studentName.localeCompare(y.studentName));
+ document.getElementById("reportTable").innerHTML=a.map(r=>
+ `<tr><td>${esc(r.date)}</td><td>${esc(r.studentName)}</td><td>${esc(r.grade)}</td><td>${esc(r.section)}</td><td>${esc(r.subject)}</td><td><span class="badge ${esc(r.status)}">${esc(r.status)}</span></td><td>${esc(r.remarks||"")}</td><td>${statusHTML(r)}</td></tr>`
+ ).join("")||'<tr><td colspan="8" class="empty">No matching records.</td></tr>';
+ return a;
+}
 
-$('today').textContent='Date: '+new Date().toLocaleDateString();
-$('attDate').value=localDateString(new Date());
+document.getElementById("generateReportBtn").onclick=generateReport;
+document.getElementById("exportReportBtn").onclick=()=>csv("attendance_report.csv",[
+ ["Date","Student","Grade","Section","Subject","Status","Remarks","Email Status"],
+ ...generateReport().map(r=>[r.date,r.studentName,r.grade,r.section,r.subject,r.status,r.remarks,r.emailStatus||"Not Sent"])
+]);
+document.getElementById("printReportBtn").onclick=()=>{generateReport();goPage("reports");window.print()};
 
-loadData();
-renderAll();
+function csv(filename,rows){
+ const content=rows.map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ const blob=new Blob(["\uFEFF"+content],{type:"text/csv;charset=utf-8"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download=filename;
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+ URL.revokeObjectURL(url);
+}
+
+// DASHBOARD ANALYTICS
+
+function dateWithin(r,from,to){return(!from||r.date>=from)&&(!to||r.date<=to)}
+
+function dashboardRecords(){
+ const f=document.getElementById("dashFrom").value;
+ const t=document.getElementById("dashTo").value;
+ const g=document.getElementById("dashGrade").value;
+ const s=document.getElementById("dashSection").value;
+ return records().filter(r=>dateWithin(r,f,t)&&(!g||r.grade===g)&&(!s||r.section===s));
+}
+
+function rateFor(a){
+ const denom=a.filter(r=>["Present","Late","Absent"].includes(r.status)).length;
+ return denom?Math.round((a.filter(r=>["Present","Late"].includes(r.status)).length/denom)*1000)/10:null;
+}
+
+function refreshDashboard(){
+ const ss=students(),rr=dashboardRecords();
+ document.getElementById("statStudents").textContent=ss.length;
+ document.getElementById("statSchedules").textContent=classes().length;
+ const rate=rateFor(rr);
+ document.getElementById("statRate").textContent=rate===null?"—":rate+"%";
+ document.getElementById("statAbsent").textContent=rr.filter(r=>r.status==="Absent").length;
+ document.getElementById("statAbsentPeriod").textContent=(document.getElementById("dashFrom").value||document.getElementById("dashTo").value)?"Within selected filters":"All recorded dates";
+
+ const group={};
+ rr.forEach(r=>{
+  const k=r.grade+" / "+r.section;
+  group[k]??={Present:0,Late:0,Absent:0,Excused:0,all:[]};
+  if(group[k][r.status]!==undefined)group[k][r.status]++;
+  group[k].all.push(r);
+ });
+
+ document.getElementById("performanceTable").innerHTML=Object.keys(group).sort().map(k=>{
+  const x=group[k],v=rateFor(x.all);
+  return `<tr><td>${esc(k)}</td><td>${x.Present}</td><td>${x.Late}</td><td>${x.Absent}</td><td>${x.Excused}</td><td><strong>${v===null?"—":v+"%"}</strong><div class="progress"><span style="width:${v||0}%"></span></div></td></tr>`;
+ }).join("")||'<tr><td colspan="6" class="empty">No attendance records match these filters.</td></tr>';
+
+ renderRanking();
+ document.getElementById("activities").innerHTML=read(K.activities,[]).slice(0,10).map(a=>`<p>${esc(a.date)} — ${esc(a.message)}</p>`).join("")||"No activities yet.";
+}
+
+function renderRanking(){
+ const period=document.getElementById("rankPeriod").value;
+ const order=document.getElementById("rankOrder").value;
+ const limit=document.getElementById("rankLimit").value;
+ const now=new Date();
+ const from=document.getElementById("dashFrom").value;
+ const to=document.getElementById("dashTo").value;
+ const g=document.getElementById("dashGrade").value;
+ const s=document.getElementById("dashSection").value;
+
+ let rr=records().filter(r=>r.status==="Absent"&&(!g||r.grade===g)&&(!s||r.section===s));
+
+ if(period==="month"){
+  const prefix=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+  rr=rr.filter(r=>r.date.startsWith(prefix));
+ }else if(period==="year"){
+  rr=rr.filter(r=>r.date.startsWith(String(now.getFullYear())));
+ }else if(period==="custom"){
+  rr=rr.filter(r=>dateWithin(r,from,to));
+ }
+
+ const counts={};
+ rr.forEach(r=>counts[r.studentId]=(counts[r.studentId]||0)+1);
+
+ let a=students().map(st=>({...st,n:counts[st.id]||0})).filter(st=>st.n>0)
+ .sort((x,y)=>order==="desc"?y.n-x.n||x.name.localeCompare(y.name):x.n-y.n||x.name.localeCompare(y.name));
+
+ if(limit!=="all")a=a.slice(0,Number(limit));
+
+ document.getElementById("topAbsentees").innerHTML=a.map((st,i)=>
+ `<tr><td>${i+1}</td><td>${esc(st.name)}</td><td>${esc(st.grade)} / ${esc(st.section)}</td><td>${st.n}</td></tr>`
+ ).join("")||'<tr><td colspan="4" class="empty">No recorded absences for this ranking period.</td></tr>';
+}
+
+document.getElementById("applyDashBtn").onclick=refreshDashboard;
+
+document.getElementById("clearDashBtn").onclick=()=>{
+ ["dashFrom","dashTo"].forEach(x=>document.getElementById(x).value="");
+ document.getElementById("dashGrade").value="";
+ options(document.getElementById("dashSection"),[],"All sections");
+ refreshDashboard();
+};
+
+document.getElementById("dashSection").onchange=refreshDashboard;
+["rankOrder","rankLimit","rankPeriod"].forEach(x=>document.getElementById(x).onchange=renderRanking);
+document.getElementById("refreshRankBtn").onclick=renderRanking;
+
+document.getElementById("reportGrade").onchange=()=>{
+ options(document.getElementById("reportSection"),sections(document.getElementById("reportGrade").value),"All sections");
+};
+
+// BACKUP, ARCHIVE, RESET AND RESTORE
+
+const APP_DATA_KEYS=[K.schoolName,K.schoolYear,K.teacher,K.grades,K.students,K.records,K.classes,K.activities,K.template];
+
+function collectAppData(){
+ const data={};
+ APP_DATA_KEYS.forEach(k=>{
+  if(k===K.teacher||k===K.template||k===K.schoolName||k===K.schoolYear)
+   data[k]=localStorage.getItem(k)||"";
+  else
+   data[k]=read(k,[]);
+ });
+ return data;
+}
+
+function makeArchiveBlob(){
+ const archive={
+  app:"School Attendance Monitoring System",
+  version:3,
+  exportedAt:new Date().toISOString(),
+  data:collectAppData()
+ };
+ return new Blob([JSON.stringify(archive,null,2)],{type:"application/json"});
+}
+
+function downloadArchive(filename){
+ const blob=makeArchiveBlob();
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download=filename;
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+function backupData(){
+ downloadArchive("attendance_app_backup_"+today()+".json");
+}
+
+function clearAllAppData(){
+ APP_DATA_KEYS.forEach(k=>localStorage.removeItem(k));
+}
+
+function afterDataChange(){
+ loadProfile();
+ clearClass();
+ clearStudent();
+ document.getElementById("historyPanel").classList.add("hidden");
+ document.getElementById("rosterTable").innerHTML='<tr><td colspan="5" class="empty">Choose a class and load the roster.</td></tr>';
+ refreshAll();
+ renderDataSummary();
+}
+
+function renderDataSummary(){
+ document.getElementById("dataStudentCount").textContent=students().length;
+ document.getElementById("dataClassCount").textContent=classes().length;
+ document.getElementById("dataRecordCount").textContent=records().length;
+ document.getElementById("dataActivityCount").textContent=read(K.activities,[]).length;
+}
+
+function validateArchive(data){
+ if(!data||!data.data||!Array.isArray(data.data[K.students])||!Array.isArray(data.data[K.records]))
+  throw Error("This file does not appear to be a valid Attendance App archive.");
+}
+
+function restoreArchiveObject(data){
+ validateArchive(data);
+ APP_DATA_KEYS.forEach(k=>localStorage.removeItem(k));
+ Object.entries(data.data).forEach(([k,v])=>{
+  if(!APP_DATA_KEYS.includes(k))return;
+  if(k===K.teacher||k===K.template||k===K.schoolName||k===K.schoolYear)
+   localStorage.setItem(k,String(v??""));
+  else
+   write(k,v);
+ });
+}
+
+async function restoreFromFile(file,input){
+ if(!file)return;
+ try{
+  const data=JSON.parse(await file.text());
+  validateArchive(data);
+  if(!confirm("Restoring this archive will replace all current Attendance App data in this browser. Continue?"))return;
+  restoreArchiveObject(data);
+  activity("Restored data from archive");
+  afterDataChange();
+  alert("Archive restored successfully.");
+ }catch(err){
+  alert("Could not restore archive: "+err.message);
+ }finally{
+  if(input)input.value="";
+ }
+}
+
+document.getElementById("backupBtn").onclick=backupData;
+document.getElementById("restoreFile").onchange=e=>restoreFromFile(e.target.files[0],e.target);
+document.getElementById("archiveRestoreFile").onchange=e=>restoreFromFile(e.target.files[0],e.target);
+
+document.getElementById("archiveResetBtn").onclick=()=>{
+ const ok=confirm("This will download a complete archive of all Attendance App data and then permanently clear the app data in this browser. Continue?");
+ if(!ok)return;
+ try{
+  downloadArchive("attendance_app_archive_"+today()+".json");
+  clearAllAppData();
+  afterDataChange();
+  alert("Archive download was initiated and the app data has been cleared. Check your Downloads folder and keep the JSON archive safe.");
+ }catch(err){
+  alert("The archive/reset process could not be completed: "+err.message+". No data was intentionally cleared.");
+ }
+};
+
+document.getElementById("deleteAllBtn").onclick=()=>{
+ const first=confirm("PERMANENT DELETION: This will erase all school profile, schedules, student records, attendance records, email template and activity history from this browser WITHOUT saving an archive. Continue?");
+ if(!first)return;
+ const second=confirm("Are you absolutely sure? This action cannot be undone unless you already have a backup.");
+ if(!second)return;
+ try{
+  clearAllAppData();
+  afterDataChange();
+  alert("All Attendance App data has been permanently deleted from this browser.");
+ }catch(err){
+  alert("Could not completely clear app data: "+err.message);
+ }
+};
+
+function refreshAll(){
+ refreshSelectors();
+ renderClasses();
+ renderStudents();
+ refreshDashboard();
+ generateReport();
+ renderDataSummary();
+}
+
+// Retain existing grade/section records and legacy single-day schedules.
+
+loadProfile();
+refreshAll();
+
 </script>
+
 </body>
+
 </html>
