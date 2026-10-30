@@ -235,6 +235,12 @@ tbody tr:hover{background:#f1f6fa}
 
 </style>
 
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="./attendance-check-icon.png">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="School Attendance">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 
 <body>
@@ -1440,6 +1446,16 @@ function refreshAll(){
 loadProfile();
 refreshAll();
 
+</script>
+
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .catch(error => console.warn("PWA registration failed:", error));
+  });
+}
 </script>
 
 </body>

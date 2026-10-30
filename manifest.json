@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "School Attendance Monitoring System",
+  "short_name": "School Attendance",
+  "description": "School attendance monitoring application",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#1e3a8a",
+  "icons": [
+    {
+      "src": "./attendance-check-icon.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
